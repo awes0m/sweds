@@ -32,7 +32,7 @@ class StoryChapter {
 }
 
 const kStory = <StoryChapter>[
-  Story Chapter(
+  StoryChapter(
     date: 'December 2025',
     title: 'The First Spark',
     body:
