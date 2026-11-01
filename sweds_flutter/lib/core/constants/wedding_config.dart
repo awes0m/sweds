@@ -32,42 +32,42 @@ class StoryChapter {
 }
 
 const kStory = <StoryChapter>[
-  StoryChapter(
-    date: 'November 2022',
+  Story Chapter(
+    date: 'December 2025',
     title: 'The First Spark',
     body:
-        'A chance conversation, a bustling Kolkata café, and cups of steaming '
-        'Darjeeling tea that stretched from afternoon into twilight. What started '
-        'as friendship sparked into something deeply profound.',
+        'A chance encounter at a family gathering,'
+        'over a delicate cup of tea, began with a simple conversation. '
+        'what seemed like an ordinary moment blossomed into an  unexpected friendship.',
     image: 'story_1',
     seed: 0,
   ),
   StoryChapter(
-    date: 'Autumn 2023',
+    date: ' As The Seasons Unfold',
     title: 'Growing in Love',
     body:
-        'Evening strolls along the ghats, endless playlists, shared values and '
-        'dreams. In every smile, we found a sanctuary and quietly realized that our '
-        'hearts had discovered their lifelong home.',
+        'From leisurely evening strolls through the city to cherished movie dates, '
+        'sharing values, dreams,and little moments,'
+        'we found our hearts walking gently in the same direction.',
     image: 'story_2',
     seed: 1,
   ),
   StoryChapter(
-    date: 'December 2024',
+    date: 'April 2026',
     title: 'Two Families, One Heart',
     body:
-        'When love is true, it yearns for family blessings. The afternoon our '
-        'parents met over warm cha and mishti, warmth filled the room. Both families '
-        'embraced our love wholeheartedly, turning our story into a shared celebration.',
+        'And then came a beautiful day when two families came together, '
+        'hearts met with warmth,and their blessings gently embraced a bond  '
+        'that had blossomed into something truly special.',
     image: 'story_3',
     seed: 2,
   ),
   StoryChapter(
-    date: 'March 2025',
-    title: 'The Ashirbaad',
+    date: 'September 2025',
+    title: 'The Engagement',
     body:
         'Echoes of the sacred shankha and joyous uludhwani as our elders blessed us '
-        'with dhan-durba, gold, and boundless love. A union chosen by our hearts and '
+        'with dhan-durba, and boundless love. A union chosen by our hearts and '
         'joyously arranged with the blessings of both our families.',
     image: 'story_4',
     seed: 3,
