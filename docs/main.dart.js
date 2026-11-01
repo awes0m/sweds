@@ -11565,8 +11565,8 @@ break
 case 5:s=l.a
 s===$&&A.a()
 s=A.bu(A.C1(s+240),40)
-r=A.bu(A.a5R(l,B.os,B.Jl),24)
-q=A.bu(A.a5R(l,B.os,B.Jm),32)
+r=A.bu(A.a5R(l,B.os,B.Jm),24)
+q=A.bu(A.a5R(l,B.os,B.Jn),32)
 p=A.bu(l.a+15,8)
 o=A.bu(l.a+15,12)
 l.d===$&&A.a()
@@ -27546,7 +27546,7 @@ a99(a){var s=a/100
 return(s<=0.0031308?s*12.92:1.055*Math.pow(s,0.4166666666666667)-0.055)*255},
 aBE(a){var s=Math.pow(Math.abs(a),0.42)
 return A.r_(a)*400*s/(s+27.13)},
-aBF(a){var s=A.oi(a,B.Jk),r=A.aBE(s[0]),q=A.aBE(s[1]),p=A.aBE(s[2])
+aBF(a){var s=A.oi(a,B.Jl),r=A.aBE(s[0]),q=A.aBE(s[1]),p=A.aBE(s[2])
 return Math.atan2((r+q-2*p)/9,(11*r+-12*q+p)/11)},
 aRX(a,b){var s,r,q,p,o,n=B.e.ba(b,4)<=1?0:100,m=(b&1)===0?0:100
 if(b<4){s=(a-n*0.7152-m*0.0722)/0.2126
@@ -27581,7 +27581,7 @@ if(q!==p){if(q<p){o=B.c.fh(A.a99(q)-0.5)
 n=B.c.lt(A.a99(a[r])-0.5)}else{o=B.c.lt(A.a99(q)-0.5)
 n=B.c.fh(A.a99(a[r])-0.5)}for(m=0;m<8;++m)if(Math.abs(n-o)<=1)break
 else{l=B.c.fh((o+n)/2)
-k=B.Js[l]
+k=B.Jt[l]
 q=c[r]
 j=(k-q)/(a[r]-q)
 q=c[0]
@@ -34122,7 +34122,7 @@ aaR(){var s=this,r=s.r
 if(r==null){r=s.r=new A.KJ(s.c)
 r.d=new A.a7m(s)}return r},
 Kr(a){var s,r,q,p,o,n,m=this
-if(B.b.B(B.Jq,a.type)){s=m.aaR()
+if(B.b.B(B.Jr,a.type)){s=m.aaR()
 s.toString
 r=m.c.$0()
 q=r.b
@@ -50810,7 +50810,7 @@ r.f=s.d},
 $S:0}
 A.Ow.prototype={
 H(a){var s=this.c.W(0,new A.f(0,40.95))
-return A.aIc(A.zZ(null,B.DP,!0),B.F,new A.vt(1,B.J6,new A.dM(B.AY,B.t)),s,1.25,B.QG)}}
+return A.aIc(A.zZ(null,B.DP,!0),B.F,new A.vt(1,B.J7,new A.dM(B.AY,B.t)),s,1.25,B.QG)}}
 A.qZ.prototype={
 I(){return"MaterialType."+this.b}}
 A.BZ.prototype={
@@ -56044,7 +56044,7 @@ p=h.go0()
 o=h.r
 o=o==null?g:o*a2+a1
 n=h.w
-n=n==null?g:B.Jr[B.e.bc(n.gn3(),0,8)]
+n=n==null?g:B.Js[B.e.bc(n.gn3(),0,8)]
 m=h.y
 m=m==null?g:m*a6+a5
 l=h.z
@@ -86833,7 +86833,7 @@ h=m<0?0.62:0.55
 g=B.c.bc(1-l*0.85,0,1)
 f=B.c.bc(l-0.25,0,1)*7
 e=a2?k*a1*0.07:0
-d=new A.ik(A.nr(e,i*p*h*(0.94+0.06*j),-l*160*b,i*0.28*b,k*(0.1+l*0.22)*b,k*0.012*m),B.z,!0,c,new A.Cu(g,new A.f_(new A.ZZ(B.Ju[s],a0,a2,c),c),c),c)
+d=new A.ik(A.nr(e,i*p*h*(0.94+0.06*j),-l*160*b,i*0.28*b,k*(0.1+l*0.22)*b,k*0.012*m),B.z,!0,c,new A.Cu(g,new A.f_(new A.ZZ(B.J2[s],a0,a2,c),c),c),c)
 if(f>0.3){$.W()
 d=new A.qF(new A.x8(f,f,B.dl),!0,d,c)}q.push(new A.fm(0,0,0,0,c,c,new A.iy(B.z,c,c,d,c),c))}a0=a2?0.1:0.085
 a1=A.ba("CHAPTER "+(a4+1)+" OF 4",c,c,c,c,A.jZ().$4$color$fontSize$fontWeight$letterSpacing(B.a0,15,B.aw,5),c,c)
@@ -87036,7 +87036,7 @@ this.eO()}}
 A.Sd.prototype={
 h7(a,b){var s,r,q=null,p=b.cJ(B.j7,t.S),o=A.bB(a,B.cv,t.w).w.a.a>=900,n=o?40:18,m=t.p,l=A.b([new A.iB(A.hp(q,A.ba("Sayantika"[0]+" & "+"Som"[0],q,q,q,q,A.fW(26,B.a0,1.05,1,B.aB),q,q),B.a1,!1,q,q,q,q,q,q,q,q,q,q,q,q,q,new A.amx(a),q,q,q),q),B.e5],m)
 if(o){m=A.b([],m)
-for(s=0;s<6;++s){r=B.Jf[s]
+for(s=0;s<6;++s){r=B.Jg[s]
 m.push(new A.Hb(r,p===r,q))}l.push(new A.iG(A.h2(m,B.L,B.B,B.ae),B.Fa,40,18,0.35,!1,q))}l.push(B.e5)
 l.push(B.Lx)
 return A.dy(q,new A.dd(new A.aA(n,18,n,18),A.h2(l,B.L,B.B,B.ae),q),q,q,0,0,0,q)}}
@@ -87136,7 +87136,7 @@ m=m?0.1:0.09
 r=t.p
 m=A.dy(n,A.h2(A.b([A.d7(A.b([A.ba("THE CELEBRATIONS",n,n,n,n,A.jZ().$4$color$fontSize$fontWeight$letterSpacing(B.a0,15,B.aw,5),n,n),B.fl,A.ba("Five Days of Joy & Traditions",n,n,n,n,A.fW(A.dI(a,30,60),B.O,1.05,-0.5,B.I),n,n)],r),B.aU,B.B,B.ae),B.e5,A.ba("0"+(e+1)+" / 05",n,n,n,n,A.ee(A.dI(a,22,34),B.aT,1.2,3,B.I,B.l),n,n)],r),B.dy,B.B,B.ae),n,n,s,22,k*m,n)
 s=A.b([A.eh(n,n,i)],r)
-for(q=0;q<5;++q){p=B.J8[q]
+for(q=0;q<5;++q){p=B.J9[q]
 o=q===4?i:36
 B.b.O(s,A.b([new A.Vi(p,q,q-g,j,f,n),new A.cf(o,n,n,n)],r))}return A.eE(B.aR,A.b([m,A.dy(n,A.wM(A.eh(A.d7(A.b([A.eh(A.h2(s,B.L,B.B,B.ae),f,n),B.iy,A.eh(A.fu(n,n,n,new A.Y_(5,j,36,i,g,n),B.x),70,h)],r),B.aU,B.B,B.ae),n,h),new A.f(-g*(j+36),0),!0),n,n,0,n,k*0.3,n)],r),B.F,B.aP)}}
 A.Vi.prototype={
@@ -87217,7 +87217,7 @@ h=a4?36:22
 g=t.p
 f=A.b([A.ba("THE VENUE",a0,a0,a0,a0,A.jZ().$4$color$fontSize$fontWeight$letterSpacing(B.a0,15,B.aw,5),a0,a0),B.fl,A.ba("Lodge Wedding Palace,Midnapore",a0,a0,a0,a0,A.fW(A.dI(a5,30,52),B.O,1.05,-0.5,B.I),a0,a0),B.zq,A.ba("Keranitola, Midnapore, West Bengal 721101",a0,a0,a0,a0,A.vr(A.dI(a5,13.5,15.5),B.O,1.6,0.78,0,B.l),a0,a0),B.e4,A.eS(a0,a0,B.u,B.by,a0,a0,a0,1,a0,a0,a0,a0,a0),B.bH],g)
 e=a4?4:3
-e=A.jL(B.J4,0,A.nq(e,"count",t.S),t.eR)
+e=A.jL(B.J5,0,A.nq(e,"count",t.S),t.eR)
 d=e.$ti
 e=new A.bw(e,e.gG(0),d.h("bw<au.E>"))
 d=d.h("au.E")
@@ -87465,7 +87465,7 @@ b3/=b4}b5=new A.cT(b1,b2,b3)
 a0=A.ahG(b5,B.lj)
 b6=Math.pow(Math.abs(A.ahG(b5,B.Oo)),32)
 b7=Math.pow(Math.max(0,Math.sin(f+c*2.39)),14)
-a0=A.A(B.DL,B.Ji[(c*3+1)%4],0.35+0.65*Math.abs(a0))
+a0=A.A(B.DL,B.Jj[(c*3+1)%4],0.35+0.65*Math.abs(a0))
 a0.toString
 b.a=a0
 a0=A.A(a0,B.k,Math.min(1,b7+b6*0.8))
@@ -90961,8 +90961,8 @@ B.aF=new A.F3(0,"clamp")
 B.Dt=new A.F(1,0.9450980392156862,0.8509803921568627,0.5490196078431373,B.h)
 B.G=new A.F(1,0.8313725490196079,0.6862745098039216,0.21568627450980393,B.h)
 B.D5=new A.F(1,0.7686274509803922,0.6039215686274509,0.17254901960784313,B.h)
-B.J7=s([B.Dt,B.G,B.D5],t.Y)
-B.om=new A.i5(B.cQ,B.ek,B.aF,B.J7,null,null)
+B.J8=s([B.Dt,B.G,B.D5],t.Y)
+B.om=new A.i5(B.cQ,B.ek,B.aF,B.J8,null,null)
 B.bX=new A.Li(1,"circle")
 B.aT=new A.F(1,0.6196078431372549,0.4588235294117647,0.11372549019607843,B.h)
 B.Bd=new A.cr(B.aT,null,null,null,null,null,B.bX)
@@ -91779,16 +91779,16 @@ B.GY=new A.qQ(B.en,A.ae("qQ<fo>"))
 B.GZ=new A.BS(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.IB=s([1373.2198709594231,-1100.4251190754821,-7.278681089101213],t.n)
 B.Ii=s([-271.815969077903,559.6580465940733,-32.46047482791194],t.n)
-B.Jt=s([1.9622899599665666,-57.173814538844006,308.7233197812385],t.n)
-B.H1=s([B.IB,B.Ii,B.Jt],t.zg)
+B.Ju=s([1.9622899599665666,-57.173814538844006,308.7233197812385],t.n)
+B.H1=s([B.IB,B.Ii,B.Ju],t.zg)
 B.on=s(["text","multiline","number","phone","datetime","emailAddress","url","visiblePassword","name","address","none","webSearch","twitter"],t.s)
 B.Hx=s([4,9,14,19],t.t)
-B.Je=s([137,80,78,71,13,10,26,10],t.Z)
+B.Jf=s([137,80,78,71,13,10,26,10],t.Z)
 B.Gj=new A.nY(0,"png")
 B.Gr=new A.kq(B.Gj,!1,0,"png")
-B.Gh=new A.m3(B.Je,B.Gr,0,"png")
-B.Jg=s([71,73,70,56,55,97],t.Z)
-B.Gg=new A.m3(B.Jg,B.hx,1,"gif87a")
+B.Gh=new A.m3(B.Jf,B.Gr,0,"png")
+B.Jh=s([71,73,70,56,55,97],t.Z)
+B.Gg=new A.m3(B.Jh,B.hx,1,"gif87a")
 B.Iw=s([71,73,70,56,57,97],t.Z)
 B.Gf=new A.m3(B.Iw,B.hx,2,"gif89a")
 B.H2=s([255,216,255],t.Z)
@@ -91807,8 +91807,8 @@ B.AC=new A.I3(1,"anonymous")
 B.HI=s([B.mi,B.AC],A.ae("t<I3>"))
 B.Ik=s([0.41233895,0.35762064,0.18051042],t.n)
 B.I3=s([0.2126,0.7152,0.0722],t.n)
-B.Jp=s([0.01932141,0.11916382,0.95034478],t.n)
-B.d4=s([B.Ik,B.I3,B.Jp],t.zg)
+B.Jq=s([0.01932141,0.11916382,0.95034478],t.n)
+B.d4=s([B.Ik,B.I3,B.Jq],t.zg)
 B.oo=s([0,4,12,1,5,13,3,7,15],t.t)
 B.YC=new A.hF(0,1)
 B.YH=new A.hF(0.5,1)
@@ -91831,8 +91831,8 @@ B.iz=new A.mP(5,"end")
 B.HW=s([B.cM,B.e7,B.bp,B.fn,B.b7,B.iz],A.ae("t<mP>"))
 B.I7=s([2,1.13276676],t.n)
 B.H5=s([2.18349805,1.20311921],t.n)
-B.J2=s([2.33888662,1.28698796],t.n)
-B.J5=s([2.48660575,1.36351941],t.n)
+B.J3=s([2.33888662,1.28698796],t.n)
+B.J6=s([2.48660575,1.36351941],t.n)
 B.I_=s([2.62226596,1.44717976],t.n)
 B.I4=s([2.7514899,1.53385819],t.n)
 B.It=s([3.36298265,1.98288283],t.n)
@@ -91840,7 +91840,7 @@ B.Ia=s([4.08649929,2.23811846],t.n)
 B.Im=s([4.85481134,2.47563463],t.n)
 B.I2=s([5.62945551,2.72948597],t.n)
 B.I8=s([6.43023796,2.98020421],t.n)
-B.op=s([B.I7,B.H5,B.J2,B.J5,B.I_,B.I4,B.It,B.Ia,B.Im,B.I2,B.I8],t.zg)
+B.op=s([B.I7,B.H5,B.J3,B.J6,B.I_,B.I4,B.It,B.Ia,B.Im,B.I2,B.I8],t.zg)
 B.HZ=s([B.jd,B.je],A.ae("t<zf>"))
 B.I1=s([18,15,10,12,15,18,15,12,12],t.n)
 B.BD=new A.qs()
@@ -91952,33 +91952,38 @@ B.OO=new A.hx("countdown","Countdown",1.1,760,!1)
 B.OQ=new A.hx("rsvp","RSVP",1.25,1000,!1)
 B.OL=new A.hx("footer","Farewell",0.8,520,!1)
 B.dK=s([B.OS,B.OR,B.OP,B.OM,B.OT,B.ON,B.OO,B.OQ,B.OL],A.ae("t<hx>"))
+B.R8=new A.t3("December 2025","The First Spark","A chance encounter at a family gathering,over a delicate cup of tea, began with a simple conversation. what seemed like an ordinary moment blossomed into an  unexpected friendship.","story_1",0)
+B.Ra=new A.t3(" As The Seasons Unfold","Growing in Love","From leisurely evening strolls through the city to cherished movie dates, sharing values, dreams,and little moments,we found our hearts walking gently in the same direction.","story_2",1)
+B.R7=new A.t3("April 2026","Two Families, One Heart","And then came a beautiful day when two families came together, hearts met with warmth,and their blessings gently embraced a bond  that had blossomed into something truly special.","story_3",2)
+B.R9=new A.t3("September 2025","The Engagement","Echoes of the sacred shankha and joyous uludhwani as our elders blessed us with dhan-durba, and boundless love. A union chosen by our hearts and joyously arranged with the blessings of both our families.","story_4",3)
+B.J2=s([B.R8,B.Ra,B.R7,B.R9],A.ae("t<t3>"))
 B.On=new A.a8("6:00 PM","Bor Jatri & Royal Boron with Conch Shells & Uludhwani")
 B.O1=new A.a8("9:00 PM","Saat Paak & Shubho Drishti beneath Betel Leaves")
 B.O9=new A.a8("10:30 PM","Mala Badal, Vedic Pheras & Sindoor Daan")
 B.O3=new A.a8("9:00 PM","Traditional Grand Bengali Feast & Celebrations")
-B.J4=s([B.On,B.O1,B.O9,B.O3],A.ae("t<+(p,p)>"))
+B.J5=s([B.On,B.O1,B.O9,B.O3],A.ae("t<+(p,p)>"))
 B.M2=new A.f(0,2)
 B.Bg=new A.d6(0.75,B.bi,B.n3,B.M2,1.5)
-B.J6=s([B.Bg],t.sq)
+B.J7=s([B.Bg],t.sq)
 B.XV=new A.p0("Aiburobhat","12 December 2026","Bride-11:00 AM, Groom-1:00 PM","Auspicious pre-wedding elder blessings with dhan-durba, followed by the traditional bachelor feast.","Groom Home/Bride Home")
 B.XW=new A.p0("Gaye Holud","13 December 2026","9:00 AM","Fragrant turmeric paste, intricate henna, vibrant marigolds, and the joy of wedding tattwa gifts.","Groom home -> Lodge Wedding Palace, Midnapore")
 B.XU=new A.p0("Shubho Bibaho","13 December","7:00 PM onwards","Saat Paak, Shubho Drishti, Mala Badal, and Sindoor Daan beneath a canopy of jasmine and tuberoses.","Lodge Wedding Palace, Midnapore")
 B.XX=new A.p0("Bodhu Boron & Adda","14 December","Evening","Welcome the new Bride and Groom with open hearts, spirited Bengali adda and love.","Groom Residence in Haldia")
 B.XY=new A.p0("Bou Bhaat & Reception","15 December","8:00 PM","Welcoming the new bride with the traditional rice ceremony, followed by an opulent gala dinner.","Groom Residence, Haldia")
-B.J8=s([B.XV,B.XW,B.XU,B.XX,B.XY],A.ae("t<p0>"))
+B.J9=s([B.XV,B.XW,B.XU,B.XX,B.XY],A.ae("t<p0>"))
 B.eV=s([B.cS,B.c9,B.fF,B.fG,B.jc],t.QP)
-B.Jf=s([1,2,3,4,5,7],t.t)
+B.Jg=s([1,2,3,4,5,7],t.t)
 B.DC=new A.F(1,0.9490196078431372,0.9725490196078431,1,B.h)
 B.Dy=new A.F(1,0.8352941176470589,0.9019607843137255,1,B.h)
 B.Dz=new A.F(1,1,0.9568627450980393,0.9098039215686274,B.h)
 B.D0=new A.F(1,0.9137254901960784,0.8705882352941177,1,B.h)
-B.Ji=s([B.DC,B.Dy,B.Dz,B.D0],t.Y)
+B.Jj=s([B.DC,B.Dy,B.Dz,B.D0],t.Y)
 B.HO=s([0.001200833568784504,0.002389694492170889,0.0002795742885861124],t.n)
 B.IH=s([0.0005891086651375999,0.0029785502573438758,0.0003270666104008398],t.n)
 B.I0=s([0.00010146692491640572,0.0005364214359186694,0.0032979401770712076],t.n)
-B.Jk=s([B.HO,B.IH,B.I0],t.zg)
-B.Jl=s([45,95,45,20,45,90,45,45,45],t.n)
-B.Jm=s([120,120,20,45,20,15,20,120,120],t.n)
+B.Jl=s([B.HO,B.IH,B.I0],t.zg)
+B.Jm=s([45,95,45,20,45,90,45,45,45],t.n)
+B.Jn=s([120,120,20,45,20,15,20,120,120],t.n)
 B.dO=new A.i8(0,"controlModifier")
 B.dP=new A.i8(1,"shiftModifier")
 B.dQ=new A.i8(2,"altModifier")
@@ -91990,9 +91995,9 @@ B.la=new A.i8(7,"functionModifier")
 B.uB=new A.i8(8,"symbolModifier")
 B.ow=s([B.dO,B.dP,B.dQ,B.dR,B.l7,B.l8,B.l9,B.la,B.uB],A.ae("t<i8>"))
 B.kR=s([!0,!1],t.HZ)
-B.Jq=s(["pointerdown","pointermove","pointerleave","pointerup","pointercancel","touchstart","touchend","touchmove","touchcancel","mousedown","mousemove","mouseleave","mouseup","wheel"],t.s)
-B.Jr=s([B.eQ,B.kC,B.hs,B.l,B.Z,B.b2,B.aw,B.ht,B.eR],A.ae("t<fh>"))
-B.Js=s([0.015176349177441876,0.045529047532325624,0.07588174588720938,0.10623444424209313,0.13658714259697685,0.16693984095186062,0.19729253930674434,0.2276452376616281,0.2579979360165119,0.28835063437139563,0.3188300904430532,0.350925934958123,0.3848314933096426,0.42057480301049466,0.458183274052838,0.4976837250274023,0.5391024159806381,0.5824650784040898,0.6277969426914107,0.6751227633498623,0.7244668422128921,0.775853049866786,0.829304845476233,0.8848452951698498,0.942497089126609,1.0022825574869039,1.0642236851973577,1.1283421258858297,1.1946592148522128,1.2631959812511864,1.3339731595349034,1.407011200216447,1.4823302800086415,1.5599503113873272,1.6398909516233677,1.7221716113234105,1.8068114625156377,1.8938294463134073,1.9832442801866852,2.075074464868551,2.1693382909216234,2.2660538449872063,2.36523901573795,2.4669114995532007,2.5710888059345764,2.6777882626779785,2.7870270208169257,2.898822059350997,3.0131901897720907,3.1301480604002863,3.2497121605402226,3.3718988244681087,3.4967242352587946,3.624204428461639,3.754355295633311,3.887192587735158,4.022731918402185,4.160988767090289,4.301978482107941,4.445716283538092,4.592217266055746,4.741496401646282,4.893568542229298,5.048448422192488,5.20615066083972,5.3666897647573375,5.5300801301023865,5.696336044816294,5.865471690767354,6.037501145825082,6.212438385869475,6.390297286737924,6.571091626112461,6.7548350853498045,6.941541251256611,7.131223617812143,7.323895587840543,7.5195704746346665,7.7182615035334345,7.919981813454504,8.124744458384042,8.332562408825165,8.543448553206703,8.757415699253682,8.974476575321063,9.194643831691977,9.417930041841839,9.644347703669503,9.873909240696694,10.106627003236781,10.342513269534024,10.58158024687427,10.8238400726681,11.069304815507364,11.317986476196008,11.569896988756009,11.825048221409341,12.083451977536606,12.345119996613247,12.610063955123938,12.878295467455942,13.149826086772048,13.42466730586372,13.702830557985108,13.984327217668513,14.269168601521828,14.55736596900856,14.848930523210871,15.143873411576273,15.44220572664832,15.743938506781891,16.04908273684337,16.35764934889634,16.66964922287304,16.985093187232053,17.30399201960269,17.62635644741625,17.95219714852476,18.281524751807332,18.614349837764564,18.95068293910138,19.290534541298456,19.633915083172692,19.98083495742689,20.331304511189067,20.685334046541502,21.042933821039977,21.404114048223256,21.76888489811322,22.137256497705877,22.50923893145328,22.884842241736916,23.264076429332462,23.6469514538663,24.033477234264016,24.42366364919083,24.817520537484558,25.21505769858089,25.61628489293138,26.021211842414342,26.429848230738664,26.842203703840827,27.258287870275353,27.678110301598522,28.10168053274597,28.529008062403893,28.96010235337422,29.39497283293396,29.83362889318845,30.276079891419332,30.722335150426627,31.172403958865512,31.62629557157785,32.08401920991837,32.54558406207592,33.010999283389665,33.4802739966603,33.953417292456834,34.430438229418264,34.911345834551085,35.39614910352207,35.88485700094671,36.37747846067349,36.87402238606382,37.37449765026789,37.87891309649659,38.38727753828926,38.89959975977785,39.41588851594697,39.93615253289054,40.460400508064545,40.98864111053629,41.520882981230194,42.05713473317016,42.597404951718396,43.141702194811224,43.6900349931913,44.24241185063697,44.798841244188324,45.35933162437017,45.92389141541209,46.49252901546552,47.065252796817916,47.64207110610409,48.22299226451468,48.808024568002054,49.3971762874833,49.9904556690408,50.587870934119984,51.189430279724725,51.79514187861014,52.40501387947288,53.0190544071392,53.637271562750364,54.259673423945976,54.88626804504493,55.517063457223934,56.15206766869424,56.79128866487574,57.43473440856916,58.08241284012621,58.734331877617365,59.39049941699807,60.05092333227251,60.715611475655585,61.38457167773311,62.057811747619894,62.7353394731159,63.417162620860914,64.10328893648692,64.79372614476921,65.48848194977529,66.18756403501224,66.89098006357258,67.59873767827808,68.31084450182222,69.02730813691093,69.74813616640164,70.47333615344107,71.20291564160104,71.93688215501312,72.67524319850172,73.41800625771542,74.16517879925733,74.9167682708136,75.67278210128072,76.43322770089146,77.1981124613393,77.96744375590167,78.74122893956174,79.51947534912904,80.30219030335869,81.08938110306934,81.88105503125999,82.67721935322541,83.4778813166706,84.28304815182372,85.09272707154808,85.90692527145302,86.72564993000343,87.54890820862819,88.3767072518277,89.2090541872801,90.04595612594655,90.88742016217518,91.73345337380438,92.58406282226491,93.43925555268066,94.29903859396902,95.16341895893969,96.03240364439274,96.9059996312159,97.78421388448044,98.6670533535366,99.55452497210776],t.n)
+B.Jr=s(["pointerdown","pointermove","pointerleave","pointerup","pointercancel","touchstart","touchend","touchmove","touchcancel","mousedown","mousemove","mouseleave","mouseup","wheel"],t.s)
+B.Js=s([B.eQ,B.kC,B.hs,B.l,B.Z,B.b2,B.aw,B.ht,B.eR],A.ae("t<fh>"))
+B.Jt=s([0.015176349177441876,0.045529047532325624,0.07588174588720938,0.10623444424209313,0.13658714259697685,0.16693984095186062,0.19729253930674434,0.2276452376616281,0.2579979360165119,0.28835063437139563,0.3188300904430532,0.350925934958123,0.3848314933096426,0.42057480301049466,0.458183274052838,0.4976837250274023,0.5391024159806381,0.5824650784040898,0.6277969426914107,0.6751227633498623,0.7244668422128921,0.775853049866786,0.829304845476233,0.8848452951698498,0.942497089126609,1.0022825574869039,1.0642236851973577,1.1283421258858297,1.1946592148522128,1.2631959812511864,1.3339731595349034,1.407011200216447,1.4823302800086415,1.5599503113873272,1.6398909516233677,1.7221716113234105,1.8068114625156377,1.8938294463134073,1.9832442801866852,2.075074464868551,2.1693382909216234,2.2660538449872063,2.36523901573795,2.4669114995532007,2.5710888059345764,2.6777882626779785,2.7870270208169257,2.898822059350997,3.0131901897720907,3.1301480604002863,3.2497121605402226,3.3718988244681087,3.4967242352587946,3.624204428461639,3.754355295633311,3.887192587735158,4.022731918402185,4.160988767090289,4.301978482107941,4.445716283538092,4.592217266055746,4.741496401646282,4.893568542229298,5.048448422192488,5.20615066083972,5.3666897647573375,5.5300801301023865,5.696336044816294,5.865471690767354,6.037501145825082,6.212438385869475,6.390297286737924,6.571091626112461,6.7548350853498045,6.941541251256611,7.131223617812143,7.323895587840543,7.5195704746346665,7.7182615035334345,7.919981813454504,8.124744458384042,8.332562408825165,8.543448553206703,8.757415699253682,8.974476575321063,9.194643831691977,9.417930041841839,9.644347703669503,9.873909240696694,10.106627003236781,10.342513269534024,10.58158024687427,10.8238400726681,11.069304815507364,11.317986476196008,11.569896988756009,11.825048221409341,12.083451977536606,12.345119996613247,12.610063955123938,12.878295467455942,13.149826086772048,13.42466730586372,13.702830557985108,13.984327217668513,14.269168601521828,14.55736596900856,14.848930523210871,15.143873411576273,15.44220572664832,15.743938506781891,16.04908273684337,16.35764934889634,16.66964922287304,16.985093187232053,17.30399201960269,17.62635644741625,17.95219714852476,18.281524751807332,18.614349837764564,18.95068293910138,19.290534541298456,19.633915083172692,19.98083495742689,20.331304511189067,20.685334046541502,21.042933821039977,21.404114048223256,21.76888489811322,22.137256497705877,22.50923893145328,22.884842241736916,23.264076429332462,23.6469514538663,24.033477234264016,24.42366364919083,24.817520537484558,25.21505769858089,25.61628489293138,26.021211842414342,26.429848230738664,26.842203703840827,27.258287870275353,27.678110301598522,28.10168053274597,28.529008062403893,28.96010235337422,29.39497283293396,29.83362889318845,30.276079891419332,30.722335150426627,31.172403958865512,31.62629557157785,32.08401920991837,32.54558406207592,33.010999283389665,33.4802739966603,33.953417292456834,34.430438229418264,34.911345834551085,35.39614910352207,35.88485700094671,36.37747846067349,36.87402238606382,37.37449765026789,37.87891309649659,38.38727753828926,38.89959975977785,39.41588851594697,39.93615253289054,40.460400508064545,40.98864111053629,41.520882981230194,42.05713473317016,42.597404951718396,43.141702194811224,43.6900349931913,44.24241185063697,44.798841244188324,45.35933162437017,45.92389141541209,46.49252901546552,47.065252796817916,47.64207110610409,48.22299226451468,48.808024568002054,49.3971762874833,49.9904556690408,50.587870934119984,51.189430279724725,51.79514187861014,52.40501387947288,53.0190544071392,53.637271562750364,54.259673423945976,54.88626804504493,55.517063457223934,56.15206766869424,56.79128866487574,57.43473440856916,58.08241284012621,58.734331877617365,59.39049941699807,60.05092333227251,60.715611475655585,61.38457167773311,62.057811747619894,62.7353394731159,63.417162620860914,64.10328893648692,64.79372614476921,65.48848194977529,66.18756403501224,66.89098006357258,67.59873767827808,68.31084450182222,69.02730813691093,69.74813616640164,70.47333615344107,71.20291564160104,71.93688215501312,72.67524319850172,73.41800625771542,74.16517879925733,74.9167682708136,75.67278210128072,76.43322770089146,77.1981124613393,77.96744375590167,78.74122893956174,79.51947534912904,80.30219030335869,81.08938110306934,81.88105503125999,82.67721935322541,83.4778813166706,84.28304815182372,85.09272707154808,85.90692527145302,86.72564993000343,87.54890820862819,88.3767072518277,89.2090541872801,90.04595612594655,90.88742016217518,91.73345337380438,92.58406282226491,93.43925555268066,94.29903859396902,95.16341895893969,96.03240364439274,96.9059996312159,97.78421388448044,98.6670533535366,99.55452497210776],t.n)
 B.Ob=new A.a8(0.7078,8.3194)
 B.O0=new A.a8(0.7895,2.4523)
 B.Om=new A.a8(0.8379,1.8528)
@@ -92007,11 +92012,6 @@ B.O2=new A.a8(0.9594,1.3212)
 B.O7=new A.a8(0.9653,1.3032)
 B.Oh=new A.a8(0.9705,1.288)
 B.oy=s([B.Ob,B.O0,B.Om,B.NX,B.O5,B.NY,B.O_,B.NZ,B.O6,B.NV,B.O2,B.O7,B.Oh],A.ae("t<+(j,j)>"))
-B.R8=new A.t3("November 2022","The First Spark","A chance conversation, a bustling Kolkata caf\xe9, and cups of steaming Darjeeling tea that stretched from afternoon into twilight. What started as friendship sparked into something deeply profound.","story_1",0)
-B.R7=new A.t3("Autumn 2023","Growing in Love","Evening strolls along the ghats, endless playlists, shared values and dreams. In every smile, we found a sanctuary and quietly realized that our hearts had discovered their lifelong home.","story_2",1)
-B.R9=new A.t3("December 2024","Two Families, One Heart","When love is true, it yearns for family blessings. The afternoon our parents met over warm cha and mishti, warmth filled the room. Both families embraced our love wholeheartedly, turning our story into a shared celebration.","story_3",2)
-B.Ra=new A.t3("March 2025","The Ashirbaad","Echoes of the sacred shankha and joyous uludhwani as our elders blessed us with dhan-durba, gold, and boundless love. A union chosen by our hearts and joyously arranged with the blessings of both our families.","story_4",3)
-B.Ju=s([B.R8,B.R7,B.R9,B.Ra],A.ae("t<t3>"))
 B.Yw=new A.n9(0.1,0.24,250,0.9,9)
 B.Yu=new A.n9(0.9,0.16,320,0.55,11)
 B.Yt=new A.n9(0.84,0.84,280,1,9)
@@ -92581,34 +92581,34 @@ B.J0=s([B.u6,null,null,B.ul],t.L)
 B.I6=s([B.u7,null,null,B.um],t.L)
 B.Is=s([B.u8,null,null,B.d6],t.L)
 B.H_=s([B.u9,null,null,B.un],t.L)
-B.Jh=s([B.ua,null,null,B.l1],t.L)
-B.Jc=s([B.ub,null,null,B.f1],t.L)
+B.Ji=s([B.ua,null,null,B.l1],t.L)
+B.Jd=s([B.ub,null,null,B.f1],t.L)
 B.HM=s([B.uc,null,null,B.d7],t.L)
-B.Jo=s([B.ud,null,null,B.f2],t.L)
-B.Jb=s([B.ue,null,null,B.d8],t.L)
+B.Jp=s([B.ud,null,null,B.f2],t.L)
+B.Jc=s([B.ue,null,null,B.d8],t.L)
 B.HK=s([B.uf,null,null,B.l2],t.L)
 B.H4=s([B.ug,null,null,B.d9],t.L)
 B.HY=s([B.uh,null,null,B.f3],t.L)
 B.J1=s([B.ui,null,null,B.da],t.L)
-B.J3=s([B.uj,null,null,B.f4],t.L)
+B.J4=s([B.uj,null,null,B.f4],t.L)
 B.HP=s([B.f_,B.f_,B.hK,null],t.L)
-B.Jj=s([B.hG,null,B.hG,null],t.L)
+B.Jk=s([B.hG,null,B.hG,null],t.L)
 B.Ib=s([B.bP,null,null,B.d7],t.L)
 B.Ic=s([B.bE,null,null,B.d8],t.L)
 B.Id=s([B.bF,null,null,B.d9],t.L)
-B.Jn=s([B.bQ,null,null,B.da],t.L)
-B.J9=s([B.kW,null,null,B.l2],t.L)
+B.Jo=s([B.bQ,null,null,B.da],t.L)
+B.Ja=s([B.kW,null,null,B.l2],t.L)
 B.HQ=s([B.eZ,B.eZ,B.hJ,null],t.L)
 B.ID=s([B.aW,null,null,B.d6],t.L)
 B.Ie=s([B.cD,null,null,B.f1],t.L)
 B.HJ=s([B.hF,null,null,B.l0],t.L)
 B.If=s([B.cE,null,null,B.f3],t.L)
-B.Ja=s([B.eY,null,null,B.l1],t.L)
+B.Jb=s([B.eY,null,null,B.l1],t.L)
 B.HR=s([B.f0,B.f0,B.hL,null],t.L)
 B.Ig=s([B.dM,null,null,B.f2],t.L)
 B.IJ=s([B.dN,null,null,B.f4],t.L)
 B.HS=s([B.cF,B.cF,B.d5,null],t.L)
-B.Le=new A.dx(["*",B.HG,"+",B.J0,"-",B.I6,".",B.Is,"/",B.H_,"0",B.Jh,"1",B.Jc,"2",B.HM,"3",B.Jo,"4",B.Jb,"5",B.HK,"6",B.H4,"7",B.HY,"8",B.J1,"9",B.J3,"Alt",B.HP,"AltGraph",B.Jj,"ArrowDown",B.Ib,"ArrowLeft",B.Ic,"ArrowRight",B.Id,"ArrowUp",B.Jn,"Clear",B.J9,"Control",B.HQ,"Delete",B.ID,"End",B.Ie,"Enter",B.HJ,"Home",B.If,"Insert",B.Ja,"Meta",B.HR,"PageDown",B.Ig,"PageUp",B.IJ,"Shift",B.HS],A.ae("dx<p,M<h?>>"))
+B.Le=new A.dx(["*",B.HG,"+",B.J0,"-",B.I6,".",B.Is,"/",B.H_,"0",B.Ji,"1",B.Jd,"2",B.HM,"3",B.Jp,"4",B.Jc,"5",B.HK,"6",B.H4,"7",B.HY,"8",B.J1,"9",B.J4,"Alt",B.HP,"AltGraph",B.Jk,"ArrowDown",B.Ib,"ArrowLeft",B.Ic,"ArrowRight",B.Id,"ArrowUp",B.Jo,"Clear",B.Ja,"Control",B.HQ,"Delete",B.ID,"End",B.Ie,"Enter",B.HJ,"Home",B.If,"Insert",B.Jb,"Meta",B.HR,"PageDown",B.Ig,"PageUp",B.IJ,"Shift",B.HS],A.ae("dx<p,M<h?>>"))
 B.LV={KeyA:0,KeyB:1,KeyC:2,KeyD:3,KeyE:4,KeyF:5,KeyG:6,KeyH:7,KeyI:8,KeyJ:9,KeyK:10,KeyL:11,KeyM:12,KeyN:13,KeyO:14,KeyP:15,KeyQ:16,KeyR:17,KeyS:18,KeyT:19,KeyU:20,KeyV:21,KeyW:22,KeyX:23,KeyY:24,KeyZ:25,Digit1:26,Digit2:27,Digit3:28,Digit4:29,Digit5:30,Digit6:31,Digit7:32,Digit8:33,Digit9:34,Digit0:35,Minus:36,Equal:37,BracketLeft:38,BracketRight:39,Backslash:40,Semicolon:41,Quote:42,Backquote:43,Comma:44,Period:45,Slash:46}
 B.uy=new A.bX(B.LV,["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","1","2","3","4","5","6","7","8","9","0","-","=","[","]","\\",";","'","`",",",".","/"],t.li)
 B.LR={Abort:0,Again:1,AltLeft:2,AltRight:3,ArrowDown:4,ArrowLeft:5,ArrowRight:6,ArrowUp:7,AudioVolumeDown:8,AudioVolumeMute:9,AudioVolumeUp:10,Backquote:11,Backslash:12,Backspace:13,BracketLeft:14,BracketRight:15,BrightnessDown:16,BrightnessUp:17,BrowserBack:18,BrowserFavorites:19,BrowserForward:20,BrowserHome:21,BrowserRefresh:22,BrowserSearch:23,BrowserStop:24,CapsLock:25,Comma:26,ContextMenu:27,ControlLeft:28,ControlRight:29,Convert:30,Copy:31,Cut:32,Delete:33,Digit0:34,Digit1:35,Digit2:36,Digit3:37,Digit4:38,Digit5:39,Digit6:40,Digit7:41,Digit8:42,Digit9:43,DisplayToggleIntExt:44,Eject:45,End:46,Enter:47,Equal:48,Escape:49,Esc:50,F1:51,F10:52,F11:53,F12:54,F13:55,F14:56,F15:57,F16:58,F17:59,F18:60,F19:61,F2:62,F20:63,F21:64,F22:65,F23:66,F24:67,F3:68,F4:69,F5:70,F6:71,F7:72,F8:73,F9:74,Find:75,Fn:76,FnLock:77,GameButton1:78,GameButton10:79,GameButton11:80,GameButton12:81,GameButton13:82,GameButton14:83,GameButton15:84,GameButton16:85,GameButton2:86,GameButton3:87,GameButton4:88,GameButton5:89,GameButton6:90,GameButton7:91,GameButton8:92,GameButton9:93,GameButtonA:94,GameButtonB:95,GameButtonC:96,GameButtonLeft1:97,GameButtonLeft2:98,GameButtonMode:99,GameButtonRight1:100,GameButtonRight2:101,GameButtonSelect:102,GameButtonStart:103,GameButtonThumbLeft:104,GameButtonThumbRight:105,GameButtonX:106,GameButtonY:107,GameButtonZ:108,Help:109,Home:110,Hyper:111,Insert:112,IntlBackslash:113,IntlRo:114,IntlYen:115,KanaMode:116,KeyA:117,KeyB:118,KeyC:119,KeyD:120,KeyE:121,KeyF:122,KeyG:123,KeyH:124,KeyI:125,KeyJ:126,KeyK:127,KeyL:128,KeyM:129,KeyN:130,KeyO:131,KeyP:132,KeyQ:133,KeyR:134,KeyS:135,KeyT:136,KeyU:137,KeyV:138,KeyW:139,KeyX:140,KeyY:141,KeyZ:142,KeyboardLayoutSelect:143,Lang1:144,Lang2:145,Lang3:146,Lang4:147,Lang5:148,LaunchApp1:149,LaunchApp2:150,LaunchAssistant:151,LaunchControlPanel:152,LaunchMail:153,LaunchScreenSaver:154,MailForward:155,MailReply:156,MailSend:157,MediaFastForward:158,MediaPause:159,MediaPlay:160,MediaPlayPause:161,MediaRecord:162,MediaRewind:163,MediaSelect:164,MediaStop:165,MediaTrackNext:166,MediaTrackPrevious:167,MetaLeft:168,MetaRight:169,MicrophoneMuteToggle:170,Minus:171,NonConvert:172,NumLock:173,Numpad0:174,Numpad1:175,Numpad2:176,Numpad3:177,Numpad4:178,Numpad5:179,Numpad6:180,Numpad7:181,Numpad8:182,Numpad9:183,NumpadAdd:184,NumpadBackspace:185,NumpadClear:186,NumpadClearEntry:187,NumpadComma:188,NumpadDecimal:189,NumpadDivide:190,NumpadEnter:191,NumpadEqual:192,NumpadMemoryAdd:193,NumpadMemoryClear:194,NumpadMemoryRecall:195,NumpadMemoryStore:196,NumpadMemorySubtract:197,NumpadMultiply:198,NumpadParenLeft:199,NumpadParenRight:200,NumpadSubtract:201,Open:202,PageDown:203,PageUp:204,Paste:205,Pause:206,Period:207,Power:208,PrintScreen:209,PrivacyScreenToggle:210,Props:211,Quote:212,Resume:213,ScrollLock:214,Select:215,SelectTask:216,Semicolon:217,ShiftLeft:218,ShiftRight:219,ShowAllWindows:220,Slash:221,Sleep:222,Space:223,Super:224,Suspend:225,Tab:226,Turbo:227,Undo:228,WakeUp:229,ZoomToggle:230}
@@ -93355,8 +93355,8 @@ B.Re=new A.wv(0,"background")
 B.zy=new A.wv(1,"shadows")
 B.zz=new A.wv(2,"decorations")
 B.Rf=new A.wv(3,"text")
-B.Jd=s([B.G,B.bz,B.aT,B.bz,B.G],t.Y)
-B.Rg=new A.t5(B.z,0,6.283185307179586,B.aF,B.Jd,null,null)
+B.Je=s([B.G,B.bz,B.aT,B.bz,B.G],t.Y)
+B.Rg=new A.t5(B.z,0,6.283185307179586,B.aF,B.Je,null,null)
 B.Rh=new A.Ey(null,null,null,null,null,null,null,null,null,null)
 B.Ri=new A.ei("_count=")
 B.Rj=new A.ei("_reentrantlyRemovedListeners=")
