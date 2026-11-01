@@ -16,8 +16,10 @@ class ProposalSection extends StatelessWidget {
   const ProposalSection({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      SceneSection(index: Sec.proposal, builder: (c, p, size) => _ProposalStage(p: p, size: size));
+  Widget build(BuildContext context) => SceneSection(
+    index: Sec.proposal,
+    builder: (c, p, size) => _ProposalStage(p: p, size: size),
+  );
 }
 
 class _ProposalStage extends StatelessWidget {
@@ -34,29 +36,31 @@ class _ProposalStage extends StatelessWidget {
 
     return Opacity(
       opacity: 1 - exit * 0.6,
-      child: Stack(children: [
-        // The ring: real 3-D, reacts to cursor + scroll.
-        Center(
-          child: PointerParallax(
-            builder: (c, o, _) => Transform(
-              alignment: Alignment.center,
-              transform: depthMatrix(
-                rx: -o.dy * 0.12,
-                ry: o.dx * 0.18,
-                dz: -(1 - enter) * 420,
-                dy: (1 - enter) * 120,
-              ),
-              child: SizedBox(
-                width: ringSide,
-                height: ringSide,
-                child: Ticking(
-                  builder: (c, time) => RepaintBoundary(
-                    child: CustomPaint(
-                      painter: RingPainter(
-                        time: time,
-                        yaw: o.dx * 0.9 + p * 1.4,
-                        pitch: -0.3 + o.dy * 0.3,
-                        glow: 0.5 + 0.5 * enter,
+      child: Stack(
+        children: [
+          // The ring: real 3-D, reacts to cursor + scroll.
+          Center(
+            child: PointerParallax(
+              builder: (c, o, _) => Transform(
+                alignment: Alignment.center,
+                transform: depthMatrix(
+                  rx: -o.dy * 0.12,
+                  ry: o.dx * 0.18,
+                  dz: -(1 - enter) * 420,
+                  dy: (1 - enter) * 120,
+                ),
+                child: SizedBox(
+                  width: ringSide,
+                  height: ringSide,
+                  child: Ticking(
+                    builder: (c, time) => RepaintBoundary(
+                      child: CustomPaint(
+                        painter: RingPainter(
+                          time: time,
+                          yaw: o.dx * 0.9 + p * 1.4,
+                          pitch: -0.3 + o.dy * 0.3,
+                          glow: 0.5 + 0.5 * enter,
+                        ),
                       ),
                     ),
                   ),
@@ -64,57 +68,82 @@ class _ProposalStage extends StatelessWidget {
               ),
             ),
           ),
-        ),
-        Positioned(
-          top: size.height * (wide ? .11 : .10),
-          left: 24,
-          right: 24,
-          child: ProgressReveal(
-            progress: p,
-            start: 0.0,
-            end: 0.22,
-            blur: 14,
-            child: Column(children: [
-              Text('THE ASHIRBAAD & UNION', style: LuxText.eyebrow(Lux.crimson)),
-              const SizedBox(height: 14),
-              Text('Two hearts blessed as one',
-                  textAlign: TextAlign.center, style: LuxText.display(context.fluid(36, 84))),
-            ]),
-          ),
-        ),
-        Positioned(
-          bottom: size.height * (wide ? .10 : .07),
-          left: 24,
-          right: 24,
-          child: Center(
+          Positioned(
+            top: size.height * (wide ? .11 : .10),
+            left: 24,
+            right: 24,
             child: ProgressReveal(
               progress: p,
-              start: 0.30,
-              end: 0.55,
-              dy: 70,
-              child: GlassPanel(
-                radius: 26,
-                padding: EdgeInsets.symmetric(horizontal: wide ? 40 : 22, vertical: 22),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 620),
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    Text('21 · 03 · 2025',
-                        style: LuxText.serif(22, style: FontStyle.normal, spacing: 6, color: Lux.crimson, weight: FontWeight.w600)),
-                    const SizedBox(height: 10),
-                    Text(
-                      'With the sacred sounds of the shankha, dhan-durba, and tears of joy, '
-                      'our parents blessed the love we built. Chosen by our hearts, '
-                      'and forever arranged by our families.',
-                      textAlign: TextAlign.center,
-                      style: LuxText.serif(context.fluid(18, 24), height: 1.45),
+              start: 0.0,
+              end: 0.22,
+              blur: 14,
+              child: Column(
+                children: [
+                  Text(
+                    'THE ASHIRBAAD & COURT MARRIAGE',
+                    style: LuxText.eyebrow(Lux.crimson),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Two hearts blessed & sealed as one',
+                    textAlign: TextAlign.center,
+                    style: LuxText.display(context.fluid(36, 84)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: size.height * (wide ? .10 : .07),
+            left: 24,
+            right: 24,
+            child: Center(
+              child: ProgressReveal(
+                progress: p,
+                start: 0.30,
+                end: 0.55,
+                dy: 70,
+                child: GlassPanel(
+                  radius: 26,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: wide ? 40 : 22,
+                    vertical: 22,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 620),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '11 · 09 · 2026',
+                          style: LuxText.serif(
+                            22,
+                            style: FontStyle.normal,
+                            spacing: 6,
+                            color: Lux.crimson,
+                            weight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'With the sacred sounds of the shankha, dhan-durba, and tears of joy, our parents blessed the love we built.'
+                          'United in court, and now celebrated through the beautiful traditions of our families, we begin this  '
+                          'new chapter together. Chosen by our hearts, and forever arranged by our families,',
+                          textAlign: TextAlign.center,
+                          style: LuxText.serif(
+                            context.fluid(18, 24),
+                            height: 1.45,
+                          ),
+                        ),
+                      ],
                     ),
-                  ]),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }

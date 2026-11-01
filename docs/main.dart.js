@@ -86874,10 +86874,10 @@ m=Math.min(m,n)
 m=A.eQ(new A.mq(new A.auw(this,j,m*(l?0.96:0.82)),o,5,o),o,o)
 s=l?0.11:0.1
 r=t.p
-s=A.dy(o,A.ov(14,A.d7(A.b([A.ba("THE ASHIRBAAD & UNION",o,o,o,o,A.jZ().$4$color$fontSize$fontWeight$letterSpacing(B.a0,15,B.aw,5),o,o),B.bH,A.ba("Two hearts blessed as one",o,o,o,o,A.fW(A.dI(a,36,84),B.O,1.05,-0.5,B.I),B.bp,o)],r),B.L,B.B,B.ae),56,0,0.22,k,0),o,o,24,24,n*s,o)
+s=A.dy(o,A.ov(14,A.d7(A.b([A.ba("THE ASHIRBAAD & COURT MARRIAGE",o,o,o,o,A.jZ().$4$color$fontSize$fontWeight$letterSpacing(B.a0,15,B.aw,5),o,o),B.bH,A.ba("Two hearts blessed & sealed as one",o,o,o,o,A.fW(A.dI(a,36,84),B.O,1.05,-0.5,B.I),B.bp,o)],r),B.L,B.B,B.ae),56,0,0.22,k,0),o,o,24,24,n*s,o)
 q=l?0.1:0.07
 p=l?40:22
-return A.jw(A.eE(B.aR,A.b([m,s,A.dy(n*q,A.eQ(A.ov(10,new A.iG(new A.hi(B.Ba,A.d7(A.b([A.ba("21 \xb7 03 \xb7 2025",o,o,o,o,A.ee(22,B.a0,1.2,6,B.I,B.b2),o,o),B.fl,A.ba("With the sacred sounds of the shankha, dhan-durba, and tears of joy, our parents blessed the love we built. Chosen by our hearts, and forever arranged by our families.",o,o,o,o,A.ee(A.dI(a,18,24),B.O,1.45,0,B.aB,B.l),B.bp,o)],r),B.L,B.B,B.an),o),new A.aA(p,22,p,22),26,22,0.5,!0,o),70,0,0.55,k,0.3),o,o),o,o,24,24,o,o)],r),B.F,B.aP),1-i*0.6)}}
+return A.jw(A.eE(B.aR,A.b([m,s,A.dy(n*q,A.eQ(A.ov(10,new A.iG(new A.hi(B.Ba,A.d7(A.b([A.ba("11 \xb7 09 \xb7 2026",o,o,o,o,A.ee(22,B.a0,1.2,6,B.I,B.b2),o,o),B.fl,A.ba("With the sacred sounds of the shankha, dhan-durba, and tears of joy, our parents blessed the love we built.United in court, and now celebrated through the beautiful traditions of our families, we begin this  new chapter together. Chosen by our hearts, and forever arranged by our families,",o,o,o,o,A.ee(A.dI(a,18,24),B.O,1.45,0,B.aB,B.l),B.bp,o)],r),B.L,B.B,B.an),o),new A.aA(p,22,p,22),26,22,0.5,!0,o),70,0,0.55,k,0.3),o,o),o,o,24,24,o,o)],r),B.F,B.aP),1-i*0.6)}}
 A.auw.prototype={
 $3(a,b,c){var s,r=this.b,q=1-r
 q=A.nr(0,q*120,-q*420,-b.b*0.12,b.a*0.18,0)
