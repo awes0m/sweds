@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "241966506711",
+    "project_id": "sweds-e6f43",
+    "storage_bucket": "sweds-e6f43.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241966506711:android:a938e88d5244817dba8692",
+        "android_client_info": {
+          "package_name": "com.example.sweds_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsZ07fFiGk4VV2pGGa0Vfts2r9LNptAow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

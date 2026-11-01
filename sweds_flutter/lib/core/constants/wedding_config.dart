@@ -7,13 +7,11 @@ abstract final class WeddingConfig {
   static const dateLabel = '13 · 12 · 2026';
   static const rsvpBy = '13 December 2026';
 
-  static const venueName = 'Weding Heritage Palace,Midnapore';
+  static const venueName = 'Lodge Wedding Palace,Midnapore';
   static const venueCity = 'Midnapore, West Bengal';
   static const venueCityShort = 'Midnapore';
-  static const venueAddress =
-      'Palace Grounds, Gopegarh Heritage Enclave, Midnapore, West Bengal 721101';
-  static const mapsUrl =
-      'https://www.google.com/maps/search/?api=1&query=Midnapore+West+Bengal';
+  static const venueAddress = 'Keranitola, Midnapore, West Bengal 721101';
+  static const mapsUrl = 'https://maps.app.goo.gl/xm3wLHpkViL3BQHSA';
 
   static Duration remaining() {
     final d = date.difference(DateTime.now());
@@ -83,46 +81,46 @@ class WeddingEvent {
 
 const kEvents = <WeddingEvent>[
   WeddingEvent(
-    'Ashirbaad & Aiburobhat',
-    '9 December',
-    '6:00 PM',
+    'Aiburobhat',
+    '12 December 2026',
+    'Bride-11:00 AM, Groom-1:00 PM',
     'Auspicious pre-wedding elder blessings with dhan-durba, followed by the traditional bachelor feast.',
-    'Heritage Courtyard',
+    'Groom Home/Bride Home',
   ),
   WeddingEvent(
-    'Gaye Holud & Mehendi',
-    '10 December',
-    '11:00 AM',
+    'Gaye Holud',
+    '13 December 2026',
+    '9:00 AM',
     'Fragrant turmeric paste, intricate henna, vibrant marigolds, and the joy of wedding tattwa gifts.',
-    'Lakeside Pavilion',
-  ),
-  WeddingEvent(
-    'Sangeet & Adda',
-    '11 December',
-    '7:30 PM',
-    'An evening of Rabindra Sangeet, beats, celebratory dhol, dance, and spirited Bengali adda.',
-    'The Grand Ballroom',
+    'Groom home -> Lodge Wedding Palace, Midnapore',
   ),
   WeddingEvent(
     'Shubho Bibaho',
-    '12 December',
-    '7:00 PM',
+    '13 December',
+    '7:00 PM onwards',
     'Saat Paak, Shubho Drishti, Mala Badal, and Sindoor Daan beneath a canopy of jasmine and tuberoses.',
-    'Rajbari Mandap',
+    'Lodge Wedding Palace, Midnapore',
+  ),
+  WeddingEvent(
+    'Bodhu Boron & Adda',
+    '14 December',
+    'Evening',
+    'Welcome the new Bride and Groom with open hearts, spirited Bengali adda and love.',
+    'Groom Residence in Haldia',
   ),
   WeddingEvent(
     'Bou Bhaat & Reception',
-    '13 December',
+    '15 December',
     '8:00 PM',
     'Welcoming the new bride with the traditional rice ceremony, followed by an opulent gala dinner.',
-    'Palace Gardens',
+    'Groom Residence, Haldia',
   ),
 ];
 
 const kVenueSchedule = <(String, String)>[
-  ('4:30 PM', 'Bor Jatri & Royal Boron with Conch Shells & Uludhwani'),
-  ('6:00 PM', 'Saat Paak & Shubho Drishti beneath Betel Leaves'),
-  ('7:30 PM', 'Mala Badal, Vedic Pheras & Sindoor Daan'),
+  ('6:00 PM', 'Bor Jatri & Royal Boron with Conch Shells & Uludhwani'),
+  ('9:00 PM', 'Saat Paak & Shubho Drishti beneath Betel Leaves'),
+  ('10:30 PM', 'Mala Badal, Vedic Pheras & Sindoor Daan'),
   ('9:00 PM', 'Traditional Grand Bengali Feast & Celebrations'),
 ];
 
