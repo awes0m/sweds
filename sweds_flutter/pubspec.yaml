@@ -34,6 +34,9 @@ dependencies:
   google_fonts: ^6.2.1
   url_launcher: ^6.3.1
   firebase_core: ^5.1.0
+  cloud_firestore: ^7.1.0
+  audioplayers: ^6.8.1
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +51,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/audio/
   shaders:
     - shaders/atmosphere.frag
 

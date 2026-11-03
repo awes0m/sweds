@@ -17,6 +17,9 @@ import '../../core/widgets/pointer_parallax.dart';
 import '../../core/widgets/section_title.dart';
 import '../../shared/models/rsvp_models.dart';
 import '../../shared/painters/burst_painters.dart';
+import '../../shared/providers/app_providers.dart';
+import '../../shared/services/card_generator_service.dart';
+import '../../shared/widgets/card_preview_dialog.dart';
 import 'rsvp_controller.dart';
 
 class RsvpSection extends StatelessWidget {
@@ -47,8 +50,6 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
   @override
   void initState() {
     super.initState();
-    // The form lives in Riverpod; controllers are rebuilt from it if the
-    // section is disposed while scrolled away.
     final s = ref.read(rsvpControllerProvider);
     _name.text = s.name;
     _email.text = s.email;
@@ -70,6 +71,14 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
     _email.clear();
     _phone.clear();
     _message.clear();
+  }
+
+  void _openGuestListDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      barrierColor: Lux.dark.withValues(alpha: .6),
+      builder: (_) => const _GuestListDialog(),
+    );
   }
 
   @override
@@ -219,10 +228,22 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
               ),
             ),
           Center(
-            child: LuxuryButton(
-              label: 'Send my reply',
-              loading: s.status == RsvpStatus.submitting,
-              onPressed: ctl.submit,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 12,
+              runSpacing: 10,
+              children: [
+                LuxuryButton(
+                  label: 'Send my reply',
+                  loading: s.status == RsvpStatus.submitting,
+                  onPressed: ctl.submit,
+                ),
+                LuxuryButton(
+                  label: 'View Guest List',
+                  filled: false,
+                  onPressed: () => _openGuestListDialog(context),
+                ),
+              ],
             ),
           ),
         ],
@@ -275,13 +296,62 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
                     textAlign: TextAlign.center,
                     style: LuxText.serif(context.fluid(19, 24), height: 1.45),
                   ),
-                  const SizedBox(height: 26),
-                  LuxuryButton(
-                    label: 'Edit my reply',
-                    filled: false,
-                    onPressed: () {
-                      ctl.edit();
-                    },
+                  const SizedBox(height: 18),
+                  // Download Status Notice Badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: Lux.gold.withValues(alpha: .15),
+                      border: Border.all(color: Lux.gold),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.download_done_rounded, size: 20, color: Lux.goldDeep),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            s.attendance == Attendance.accepts
+                                ? 'Your custom Wedding Invite Card has downloaded!'
+                                : 'Your personalized Greeting Card has downloaded!',
+                            style: LuxText.serif(14, weight: FontWeight.w600, color: Lux.goldDeep),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 12,
+                    runSpacing: 10,
+                    children: [
+                      LuxuryButton(
+                        label: 'Preview Card 👁',
+                        onPressed: () => CardPreviewDialog.show(context, s.toSubmission()),
+                      ),
+                      LuxuryButton(
+                        label: 'Download Card Again 📥',
+                        filled: false,
+                        onPressed: () async {
+                          const generator = CardGeneratorService();
+                          await generator.generateAndDownload(s.toSubmission());
+                        },
+                      ),
+                      LuxuryButton(
+                        label: 'View Guest List',
+                        filled: false,
+                        onPressed: () => _openGuestListDialog(context),
+                      ),
+                      LuxuryButton(
+                        label: 'Edit reply',
+                        filled: false,
+                        onPressed: () {
+                          ctl.edit();
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -444,4 +514,198 @@ class _Step extends StatelessWidget {
       ),
     ),
   );
+}
+
+class _GuestListDialog extends ConsumerWidget {
+  const _GuestListDialog();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final guestsAsync = ref.watch(confirmedGuestsProvider);
+    final wide = MediaQuery.sizeOf(context).width >= 700;
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: wide ? 40 : 16,
+        vertical: 24,
+      ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 620, maxHeight: 640),
+        child: GlassPanel(
+          radius: 32,
+          padding: EdgeInsets.all(wide ? 32 : 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Confirmed Guests',
+                          style: LuxText.display(wide ? 28 : 22, color: Lux.crimson),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Celebrating together with blessings & love',
+                          style: LuxText.serif(14, style: FontStyle.italic),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded, color: Lux.dark),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Divider(color: Lux.champagne, height: 1),
+              const SizedBox(height: 12),
+              Expanded(
+                child: guestsAsync.when(
+                  data: (guests) {
+                    if (guests.isEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text(
+                            'No replies confirmed yet.\nBe the first to say Joyfully Accepts!',
+                            textAlign: TextAlign.center,
+                            style: LuxText.serif(18, height: 1.5),
+                          ),
+                        ),
+                      );
+                    }
+                    final totalAttendees = guests.fold<int>(
+                      0,
+                      (sum, g) => sum + (g.guests > 0 ? g.guests : 1),
+                    );
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '${guests.length} ${guests.length == 1 ? 'party' : 'parties'} · $totalAttendees attending',
+                              style: LuxText.body(13, color: Lux.goldDeep, opacity: 1),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.separated(
+                            itemCount: guests.length,
+                            separatorBuilder: (_, __) =>
+                                const Divider(color: Color(0x156B1E22), height: 12),
+                            itemBuilder: (context, index) {
+                              final g = guests[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 6),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 36,
+                                      height: 36,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Lux.gold.withValues(alpha: .2),
+                                        border: Border.all(color: Lux.gold),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        g.name.isNotEmpty
+                                            ? g.name.trim()[0].toUpperCase()
+                                            : '?',
+                                        style: LuxText.serif(16,
+                                            weight: FontWeight.bold,
+                                            color: Lux.crimson),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 14),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  g.name,
+                                                  style: LuxText.serif(17,
+                                                      weight: FontWeight.w600,
+                                                      color: Lux.dark),
+                                                ),
+                                              ),
+                                              if (g.guests > 1)
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(
+                                                      horizontal: 8, vertical: 2),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(10),
+                                                    color: Lux.gold.withValues(alpha: .2),
+                                                  ),
+                                                  child: Text(
+                                                    '${g.guests} seats',
+                                                    style: LuxText.body(12,
+                                                        color: Lux.goldDeep,
+                                                        opacity: 1),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                          if (g.message.isNotEmpty)
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 4),
+                                              child: Text(
+                                                '“${g.message}”',
+                                                style: LuxText.serif(14,
+                                                    style: FontStyle.italic,
+                                                    color: Lux.dark.withValues(alpha: .8)),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(color: Lux.gold),
+                  ),
+                  error: (err, _) => Center(
+                    child: Text(
+                      'Failed to load guest list.\n$err',
+                      textAlign: TextAlign.center,
+                      style: LuxText.body(14, color: const Color(0xFFB3463B)),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Center(
+                child: LuxuryButton(
+                  label: 'Close',
+                  filled: false,
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../shared/models/rsvp_models.dart';
 import '../../shared/providers/app_providers.dart';
+import '../../shared/services/card_generator_service.dart';
 
 part 'rsvp_controller.g.dart';
 
@@ -24,9 +26,21 @@ class RsvpController extends _$RsvpController {
     }
     state = state.copyWith(status: RsvpStatus.submitting);
     try {
-      await ref.read(rsvpServiceProvider).submit(state.toSubmission());
+      final submission = state.toSubmission();
+      await ref.read(rsvpServiceProvider).submit(submission);
       state = state.copyWith(status: RsvpStatus.success);
-    } catch (_) {
+
+      // Automatically generate and trigger download of customized invite / greeting card
+      try {
+        const generator = CardGeneratorService();
+        await generator.generateAndDownload(submission);
+      } catch (err, errSt) {
+        debugPrint(
+          'Auto download card failed (can be downloaded from UI): $err\n$errSt',
+        );
+      }
+    } catch (e, st) {
+      debugPrint('RSVP submission error: $e\n$st');
       state = state.copyWith(status: RsvpStatus.failure);
     }
   }

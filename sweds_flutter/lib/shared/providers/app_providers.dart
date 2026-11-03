@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/constants/wedding_config.dart';
 import '../../core/theme/app_theme.dart';
+import '../models/rsvp_models.dart';
 import '../services/audio_service.dart';
 import '../services/rsvp_service.dart';
 import 'scene_providers.dart';
@@ -44,7 +45,11 @@ class CursorHovering extends _$CursorHovering {
 }
 
 @Riverpod(keepAlive: true)
-AmbientAudioService audioService(Ref ref) => SilentAudioService();
+AmbientAudioService audioService(Ref ref) {
+  final service = AppAudioService();
+  ref.onDispose(service.dispose);
+  return service;
+}
 
 @Riverpod(keepAlive: true)
 class AmbientMusic extends _$AmbientMusic {
@@ -61,7 +66,12 @@ class AmbientMusic extends _$AmbientMusic {
 ThemeData appTheme(Ref ref) => buildLuxTheme();
 
 @Riverpod(keepAlive: true)
-RsvpService rsvpService(Ref ref) => MockRsvpService();
+RsvpService rsvpService(Ref ref) => FirestoreRsvpService();
+
+@riverpod
+Stream<List<RsvpSubmission>> confirmedGuests(Ref ref) {
+  return ref.watch(rsvpServiceProvider).watchConfirmedGuests();
+}
 
 @riverpod
 Stream<Duration> countdown(Ref ref) async* {

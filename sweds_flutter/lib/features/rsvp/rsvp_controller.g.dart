@@ -41,7 +41,7 @@ final class RsvpControllerProvider
   }
 }
 
-String _$rsvpControllerHash() => r'123fb8f249e599fe659e6f8299eabc32665540ca';
+String _$rsvpControllerHash() => r'9ab29b251eaeefc4845f5f32139402ac94c006bb';
 
 abstract class _$RsvpController extends $Notifier<RsvpFormState> {
   RsvpFormState build();

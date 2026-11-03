@@ -1,0 +1,151 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// This security rules file assumes the following data structures:
+//
+// Collection: rsvps
+// Document ID: Auto-generated document ID (e.g. Firestore push ID)
+//
+// Fields:
+//   - name: string (required, 1-100 chars) - Full name of the guest
+//   - email: string (required, valid email, 5-100 chars) - Guest contact email
+//   - phone: string (required, 7-25 chars) - Guest contact phone number
+//   - attendance: string (required, 'accepts' or 'declines') - Attendance decision
+//   - guests: int (required, 0-10) - Number of additional/accompanying guests
+//   - message: string (optional, 0-1000 chars) - Congratulatory note or message
+//   - submittedAt: timestamp (optional) - Server timestamp of the submission
+//
+// Access Control:
+//   - Read: Publicly allowed so the wedding website can display confirmed guests.
+//   - Create: Publicly allowed with strict schema, type, and size validation.
+//   - Update: Denied for unauthenticated public clients to prevent overwriting
+//             or tampering; allowed only for authenticated administrators with
+//             full schema validation and immutable submittedAt protection.
+//   - Delete: Denied for unauthenticated public clients; allowed only for
+//             authenticated administrators.
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -----------------------------------------------------------
+    // Default Deny Rule
+    // -----------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // -----------------------------------------------------------
+    // Helper Functions
+    // -----------------------------------------------------------
+
+    // Check if the user is authenticated with Firebase Auth
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if the requesting user has administrator privileges via custom claim
+    function isAdmin() {
+      return isAuthenticated() &&
+        ('admin' in request.auth.token && request.auth.token.admin == true);
+    }
+
+    // Validate that all required keys are present
+    function hasRequiredFields(data, fields) {
+      return data.keys().hasAll(fields);
+    }
+
+    // Validate that no arbitrary or unexpected keys are present
+    function hasOnlyAllowedFields(data, allowedFields) {
+      return data.keys().hasOnly(allowedFields);
+    }
+
+    // Validate email format and bounded length (5-100 characters)
+    function isValidEmail(email) {
+      return email is string &&
+        email.size() >= 5 &&
+        email.size() <= 100 &&
+        email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // Validate phone number: string, length 7-25, standard phone characters
+    function isValidPhone(phone) {
+      return phone is string &&
+        phone.size() >= 7 &&
+        phone.size() <= 25 &&
+        phone.matches("^[+0-9() .-]+$");
+    }
+
+    // Validate attendance status: enum ('accepts' or 'declines')
+    function isValidAttendance(attendance) {
+      return attendance is string &&
+        (attendance == 'accepts' || attendance == 'declines');
+    }
+
+    // Validate guest count: integer between 0 and 10
+    function isValidGuests(guests) {
+      return guests is int &&
+        guests >= 0 &&
+        guests <= 10;
+    }
+
+    // Validate optional message: if provided, must be string <= 1000 characters
+    function isValidMessage(data) {
+      return !('message' in data) ||
+        (data.message is string && data.message.size() <= 1000);
+    }
+
+    // Validate optional submittedAt: if provided, must be a timestamp <= request.time
+    function isValidSubmittedAt(data) {
+      return !('submittedAt' in data) ||
+        (data.submittedAt is timestamp && data.submittedAt <= request.time);
+    }
+
+    // Ensure specified immutable fields cannot be altered on update
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    // -----------------------------------------------------------
+    // Domain Validator
+    // -----------------------------------------------------------
+
+    // Strict validator enforcing complete schema integrity for RSVPs
+    function isValidRsvp(data) {
+      return hasOnlyAllowedFields(data, ['name', 'email', 'phone', 'attendance', 'guests', 'message', 'submittedAt']) &&
+        hasRequiredFields(data, ['name', 'email', 'phone', 'attendance', 'guests']) &&
+        data.name is string &&
+        data.name.size() >= 1 &&
+        data.name.size() <= 100 &&
+        isValidEmail(data.email) &&
+        isValidPhone(data.phone) &&
+        isValidAttendance(data.attendance) &&
+        isValidGuests(data.guests) &&
+        isValidMessage(data) &&
+        isValidSubmittedAt(data);
+    }
+
+    // -----------------------------------------------------------
+    // Collection Rules: RSVPs
+    // -----------------------------------------------------------
+    match /rsvps/{rsvpId} {
+      // Allow public read to retrieve confirmed guests for the wedding app
+      allow read: if true;
+
+      // Allow public submission when payload strictly adheres to schema & size constraints
+      allow create: if isValidRsvp(request.resource.data);
+
+      // Prevent unauthenticated tampering/overwriting: only admins can update with valid schema
+      allow update: if isAdmin() &&
+                       isValidRsvp(request.resource.data) &&
+                       areImmutableFieldsUnchanged(['submittedAt']);
+
+      // Prevent unauthenticated deletion: only admins can delete RSVPs
+      allow delete: if isAdmin();
+    }
+  }
+}

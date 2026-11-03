@@ -7,11 +7,32 @@ abstract final class WeddingConfig {
   static const dateLabel = '13 · 12 · 2026';
   static const rsvpBy = '13 December 2026';
 
-  static const venueName = 'Lodge Wedding Palace,Midnapore';
+  // Legacy/Default references
+  static const venueName = 'Lodge Wedding Palace, Midnapore';
   static const venueCity = 'Midnapore, West Bengal';
   static const venueCityShort = 'Midnapore';
   static const venueAddress = 'Keranitola, Midnapore, West Bengal 721101';
   static const mapsUrl = 'https://maps.app.goo.gl/xm3wLHpkViL3BQHSA';
+
+  // Wedding Ceremony Details
+  static const weddingVenueName = 'Lodge Wedding Palace';
+  static const weddingVenueCity = 'Midnapore, West Bengal';
+  static const weddingVenueCityShort = 'Midnapore';
+  static const weddingVenueAddress =
+      'near Swimming pool, Keranitola, Midnapore, West Bengal 721101';
+  static const weddingMapsUrl = 'https://maps.app.goo.gl/xm3wLHpkViL3BQHSA';
+  static const weddingDateLabel = 'Sunday, 13 December 2026';
+  static const weddingTimeLabel = '7:00 PM onwards';
+
+  // Reception Ceremony Details
+  static const receptionVenueName = 'Groom Residence';
+  static const receptionVenueCity = 'Haldia, West Bengal';
+  static const receptionVenueCityShort = 'Haldia';
+  static const receptionVenueAddress =
+      'Behind Kanya Milan School,Basudevpur,Haldia, Purba Medinipur, West Bengal 721602';
+  static const receptionMapsUrl = 'https://maps.app.goo.gl/rRSv5bdzXiG9Hmo67';
+  static const receptionDateLabel = 'Tuesday, 15 December 2026';
+  static const receptionTimeLabel = '8:00 PM onwards';
 
   static Duration remaining() {
     final d = date.difference(DateTime.now());
@@ -38,7 +59,7 @@ const kStory = <StoryChapter>[
     body:
         'A chance encounter at a family gathering,'
         'over a delicate cup of tea, began with a simple conversation. '
-        'what seemed like an ordinary moment blossomed into an  unexpected friendship.',
+        'what seemed like an ordinary moment blossomed into an unexpected friendship.',
     image: 'story_1',
     seed: 0,
   ),
@@ -57,7 +78,7 @@ const kStory = <StoryChapter>[
     title: 'Two Families, One Heart',
     body:
         'And then came a beautiful day when two families came together, '
-        'hearts met with warmth,and their blessings gently embraced a bond  '
+        'hearts met with warmth,and their blessings gently embraced a bond '
         'that had blossomed into something truly special.',
     image: 'story_3',
     seed: 2,
@@ -122,6 +143,15 @@ const kVenueSchedule = <(String, String)>[
   ('9:00 PM', 'Saat Paak & Shubho Drishti beneath Betel Leaves'),
   ('10:30 PM', 'Mala Badal, Vedic Pheras & Sindoor Daan'),
   ('9:00 PM', 'Traditional Grand Bengali Feast & Celebrations'),
+];
+
+const kWeddingSchedule = kVenueSchedule;
+
+const kReceptionSchedule = <(String, String)>[
+  ('11:00 AM', 'Auspicious Bhat Kapor Ceremony & Family Welcoming'),
+  ('7:30 PM', 'Guest Welcoming with Rose Water & Shehnai Melodies'),
+  ('8:00 PM', 'Bou Bhaat Gala Reception & Heartfelt Adda'),
+  ('8:30 PM', 'Royal Festive Bengali Feast & Desserts'),
 ];
 
 class GalleryItem {

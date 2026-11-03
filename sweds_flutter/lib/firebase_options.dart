@@ -21,7 +21,10 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return android;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for android - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.iOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for ios - '
@@ -50,20 +53,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBavWf5EkGj5AN7iA8c7awfzjQJM1y7viM',
-    appId: '1:241966506711:web:89dae8d786b9c0bdba8692',
-    messagingSenderId: '241966506711',
-    projectId: 'sweds-e6f43',
-    authDomain: 'sweds-e6f43.firebaseapp.com',
-    storageBucket: 'sweds-e6f43.firebasestorage.app',
-    measurementId: 'G-J3896HWS97',
-  );
-
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAsZ07fFiGk4VV2pGGa0Vfts2r9LNptAow',
-    appId: '1:241966506711:android:a938e88d5244817dba8692',
-    messagingSenderId: '241966506711',
-    projectId: 'sweds-e6f43',
-    storageBucket: 'sweds-e6f43.firebasestorage.app',
+    apiKey: 'AIzaSyAkwNAsDyP2qvqCZuQGInAH40CNVbVRLAc',
+    appId: '1:310512699689:web:0428628bd9add827134f38',
+    messagingSenderId: '310512699689',
+    projectId: 'sweds26',
+    authDomain: 'sweds26.firebaseapp.com',
+    storageBucket: 'sweds26.firebasestorage.app',
+    measurementId: 'G-VZXY6413FQ',
   );
 }

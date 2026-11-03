@@ -257,7 +257,7 @@ final class AudioServiceProvider
   }
 }
 
-String _$audioServiceHash() => r'99941c8315b5fb53d9585e0c01a316983d8782fe';
+String _$audioServiceHash() => r'82b4c9a03e07b7654877ab646a2050a1351e8c05';
 
 @ProviderFor(AmbientMusic)
 const ambientMusicProvider = AmbientMusicProvider._();
@@ -391,7 +391,48 @@ final class RsvpServiceProvider
   }
 }
 
-String _$rsvpServiceHash() => r'2cecf68b754670894d49ebd4f9b11232d5e8423d';
+String _$rsvpServiceHash() => r'd6b8d5f8ac995d2088510974f1a622efdef631fb';
+
+@ProviderFor(confirmedGuests)
+const confirmedGuestsProvider = ConfirmedGuestsProvider._();
+
+final class ConfirmedGuestsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<RsvpSubmission>>,
+          List<RsvpSubmission>,
+          Stream<List<RsvpSubmission>>
+        >
+    with
+        $FutureModifier<List<RsvpSubmission>>,
+        $StreamProvider<List<RsvpSubmission>> {
+  const ConfirmedGuestsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'confirmedGuestsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$confirmedGuestsHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<List<RsvpSubmission>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<RsvpSubmission>> create(Ref ref) {
+    return confirmedGuests(ref);
+  }
+}
+
+String _$confirmedGuestsHash() => r'fe3fc793c2573308ad995c92691cd68c12ecbbc5';
 
 @ProviderFor(countdown)
 const countdownProvider = CountdownProvider._();
