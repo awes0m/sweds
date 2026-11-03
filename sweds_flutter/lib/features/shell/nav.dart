@@ -29,17 +29,19 @@ class TopBar extends ConsumerWidget {
       left: 0,
       right: 0,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: wide ? 40 : 18, vertical: 18),
+        padding: EdgeInsets.symmetric(horizontal: wide ? 40 : 12, vertical: wide ? 18 : 12),
         child: Row(children: [
           CursorHover(
             child: GestureDetector(
               onTap: () => context.goToSection(Sec.hero),
-              child: Text('${WeddingConfig.bride[0]} & ${WeddingConfig.groom[0]}',
-                  style: LuxText.display(26, color: Lux.crimson, style: FontStyle.italic, spacing: 1)),
+              child: Text(
+                '${WeddingConfig.bride[0]} & ${WeddingConfig.groom[0]}',
+                style: LuxText.display(wide ? 26 : 21, color: Lux.crimson, style: FontStyle.italic, spacing: 1),
+              ),
             ),
           ),
-          const Spacer(),
-          if (wide)
+          if (wide) ...[
+            const Spacer(),
             GlassPanel(
               radius: 40,
               blur: 18,
@@ -50,9 +52,104 @@ class TopBar extends ConsumerWidget {
                 for (final i in _links) _NavLink(index: i, active: active == i),
               ]),
             ),
-          const Spacer(),
-          const MusicToggle(),
+            const Spacer(),
+          ] else ...[
+            Expanded(
+              child: Center(
+                child: _MobileNav(active: active),
+              ),
+            ),
+          ],
+          MusicToggle(compact: !wide),
         ]),
+      ),
+    );
+  }
+}
+
+class _MobileNav extends StatelessWidget {
+  const _MobileNav({required this.active});
+  final int active;
+
+  static const _items = [
+    (Sec.story, Icons.favorite_rounded, 'Story'),
+    (Sec.proposal, Icons.diamond_rounded, 'Ring'),
+    (Sec.timeline, Icons.celebration_rounded, 'Events'),
+    (Sec.venue, Icons.place_rounded, 'Venues'),
+    (Sec.gallery, Icons.photo_camera_rounded, 'Moments'),
+    (Sec.rsvp, Icons.mail_outline_rounded, 'RSVP'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassPanel(
+      radius: 28,
+      blur: 16,
+      opacity: 0.42,
+      shadow: false,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final (sec, icon, label) in _items)
+            _MobileNavIcon(
+              index: sec,
+              icon: icon,
+              label: label,
+              active: active == sec,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MobileNavIcon extends StatelessWidget {
+  const _MobileNavIcon({
+    required this.index,
+    required this.icon,
+    required this.label,
+    required this.active,
+  });
+
+  final int index;
+  final IconData icon;
+  final String label;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => context.goToSection(index),
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Motion.cinematic,
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: active ? Lux.gold.withValues(alpha: .28) : Colors.transparent,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 15,
+              color: active ? Lux.crimson : Lux.dark.withValues(alpha: .55),
+            ),
+            const SizedBox(height: 2),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              width: active ? 10 : 0,
+              height: 2,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2),
+                color: active ? Lux.crimson : Colors.transparent,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -98,17 +195,20 @@ class _NavLinkState extends State<_NavLink> {
 }
 
 class MusicToggle extends ConsumerWidget {
-  const MusicToggle({super.key});
+  const MusicToggle({super.key, this.compact = false});
+
+  final bool compact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final on = ref.watch(ambientMusicProvider);
+    final size = compact ? 38.0 : 46.0;
     return CursorHover(
       child: GestureDetector(
         onTap: () => ref.read(ambientMusicProvider.notifier).toggle(),
         child: Container(
-          width: 46,
-          height: 46,
+          width: size,
+          height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Lux.ivory.withValues(alpha: .55),

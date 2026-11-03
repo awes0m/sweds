@@ -17,7 +17,6 @@ import '../../core/widgets/pointer_parallax.dart';
 import '../../core/widgets/section_title.dart';
 import '../../shared/models/rsvp_models.dart';
 import '../../shared/painters/burst_painters.dart';
-import '../../shared/providers/app_providers.dart';
 import '../../shared/services/card_generator_service.dart';
 import '../../shared/widgets/card_preview_dialog.dart';
 import 'rsvp_controller.dart';
@@ -73,14 +72,6 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
     _message.clear();
   }
 
-  void _openGuestListDialog(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      barrierColor: Lux.dark.withValues(alpha: .6),
-      builder: (_) => const _GuestListDialog(),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final s = ref.watch(rsvpControllerProvider);
@@ -91,7 +82,10 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
     final form = GlassPanel(
       key: const ValueKey('form'),
       radius: 36,
-      padding: EdgeInsets.all(wide ? 40 : 22),
+      padding: EdgeInsets.symmetric(
+        horizontal: wide ? 40 : 16,
+        vertical: wide ? 40 : 20,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -103,17 +97,18 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
             s.showErrors ? s.nameError : null,
             icon: Icons.person_outline_rounded,
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: wide ? 14 : 10),
           wide
               ? Row(
                   children: [
                     Expanded(
                       child: _field(
-                        'Email',
+                        'Email (optional)',
                         _email,
                         ctl.setEmail,
                         s.showErrors ? s.emailError : null,
                         type: TextInputType.emailAddress,
+                        helperText: 'Give email if you want wedding photos',
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -131,13 +126,14 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
               : Column(
                   children: [
                     _field(
-                      'Email',
+                      'Email (optional)',
                       _email,
                       ctl.setEmail,
                       s.showErrors ? s.emailError : null,
                       type: TextInputType.emailAddress,
+                      helperText: 'Give email if you want wedding photos',
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
                     _field(
                       'Contact number',
                       _phone,
@@ -147,13 +143,14 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
                     ),
                   ],
                 ),
-          const SizedBox(height: 20),
+          SizedBox(height: wide ? 20 : 14),
           Row(
             children: [
               Expanded(
                 child: _Choice(
                   label: 'Joyfully accepts',
                   selected: s.attendance == Attendance.accepts,
+                  compact: !wide,
                   onTap: () => ctl.setAttendance(Attendance.accepts),
                 ),
               ),
@@ -162,6 +159,7 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
                 child: _Choice(
                   label: 'Regretfully declines',
                   selected: s.attendance == Attendance.declines,
+                  compact: !wide,
                   onTap: () => ctl.setAttendance(Attendance.declines),
                 ),
               ),
@@ -172,48 +170,90 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
             curve: Motion.cinematic,
             child: s.attendance == Attendance.accepts
                 ? Padding(
-                    padding: const EdgeInsets.only(top: 18),
-                    child: Row(
+                    padding: EdgeInsets.only(top: wide ? 18 : 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Guests',
+                          'Which events will you attend?',
                           style: LuxText.serif(
-                            20,
-                            style: FontStyle.normal,
-                            color: Lux.dark.withValues(alpha: .7),
+                            wide ? 16 : 14.5,
+                            weight: FontWeight.w600,
+                            color: Lux.dark.withValues(alpha: .85),
                           ),
                         ),
-                        const Spacer(),
-                        _Step(
-                          icon: Icons.remove_rounded,
-                          onTap: () => ctl.setGuests(s.guests - 1),
+                        SizedBox(height: wide ? 10 : 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            _EventChoice(
+                              label: 'Both Celebrations',
+                              sublabel: 'Wedding & Reception',
+                              selected: s.events == AttendingEvents.both,
+                              compact: !wide,
+                              onTap: () => ctl.setEvents(AttendingEvents.both),
+                            ),
+                            _EventChoice(
+                              label: 'Wedding Ceremony Only',
+                              sublabel: '13 Dec · Shubho Bibaho',
+                              selected: s.events == AttendingEvents.weddingOnly,
+                              compact: !wide,
+                              onTap: () => ctl.setEvents(AttendingEvents.weddingOnly),
+                            ),
+                            _EventChoice(
+                              label: 'Reception Gala Only',
+                              sublabel: '15 Dec · Bou Bhaat',
+                              selected: s.events == AttendingEvents.receptionOnly,
+                              compact: !wide,
+                              onTap: () => ctl.setEvents(AttendingEvents.receptionOnly),
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          width: 52,
-                          child: Text(
-                            '${s.guests}',
-                            textAlign: TextAlign.center,
-                            style: LuxText.display(26),
-                          ),
-                        ),
-                        _Step(
-                          icon: Icons.add_rounded,
-                          onTap: () => ctl.setGuests(s.guests + 1),
+                        SizedBox(height: wide ? 18 : 12),
+                        Row(
+                          children: [
+                            Text(
+                              'Guests',
+                              style: LuxText.serif(
+                                wide ? 20 : 17,
+                                style: FontStyle.normal,
+                                color: Lux.dark.withValues(alpha: .7),
+                              ),
+                            ),
+                            const Spacer(),
+                            _Step(
+                              icon: Icons.remove_rounded,
+                              onTap: () => ctl.setGuests(s.guests - 1),
+                            ),
+                            SizedBox(
+                              width: 52,
+                              child: Text(
+                                '${s.guests}',
+                                textAlign: TextAlign.center,
+                                style: LuxText.display(wide ? 26 : 22),
+                              ),
+                            ),
+                            _Step(
+                              icon: Icons.add_rounded,
+                              onTap: () => ctl.setGuests(s.guests + 1),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   )
                 : const SizedBox(width: double.infinity),
           ),
-          const SizedBox(height: 18),
+          SizedBox(height: wide ? 18 : 12),
           _field(
             'A note for the couple',
             _message,
             ctl.setMessage,
             null,
-            lines: 3,
+            lines: wide ? 3 : 2,
           ),
-          const SizedBox(height: 26),
+          SizedBox(height: wide ? 26 : 18),
           if (s.status == RsvpStatus.failure)
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -228,22 +268,11 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
               ),
             ),
           Center(
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 12,
-              runSpacing: 10,
-              children: [
-                LuxuryButton(
-                  label: 'Send my reply',
-                  loading: s.status == RsvpStatus.submitting,
-                  onPressed: ctl.submit,
-                ),
-                LuxuryButton(
-                  label: 'View Guest List',
-                  filled: false,
-                  onPressed: () => _openGuestListDialog(context),
-                ),
-              ],
+            child: LuxuryButton(
+              label: 'Send my reply',
+              compact: !wide,
+              loading: s.status == RsvpStatus.submitting,
+              onPressed: ctl.submit,
             ),
           ),
         ],
@@ -254,13 +283,16 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
         GlassPanel(
               key: const ValueKey('thanks'),
               radius: 36,
-              padding: EdgeInsets.all(wide ? 48 : 28),
+              padding: EdgeInsets.symmetric(
+                horizontal: wide ? 48 : 20,
+                vertical: wide ? 48 : 24,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    width: 74,
-                    height: 74,
+                    width: wide ? 74 : 52,
+                    height: wide ? 74 : 52,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
@@ -271,9 +303,9 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
                         ],
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.check_rounded,
-                      size: 38,
+                      size: wide ? 38 : 26,
                       color: Lux.dark,
                     ),
                   ).animate().scale(
@@ -282,70 +314,84 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
                     duration: 900.ms,
                     curve: Curves.elasticOut,
                   ),
-                  const SizedBox(height: 22),
+                  SizedBox(height: wide ? 22 : 12),
                   Text(
                     'Thank you, ${s.name.trim().split(' ').first}',
                     textAlign: TextAlign.center,
-                    style: LuxText.display(context.fluid(30, 46)),
+                    style: LuxText.display(context.fluid(wide ? 30 : 24, 46)),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: wide ? 12 : 8),
                   Text(
                     s.attendance == Attendance.accepts
                         ? 'We have saved ${s.guests == 1 ? 'a seat' : '${s.guests} seats'} for you.\nWe can’t wait to celebrate together and receive your warm blessings.'
                         : 'We will miss you dearly, and we’re deeply grateful for your blessings and love.',
                     textAlign: TextAlign.center,
-                    style: LuxText.serif(context.fluid(19, 24), height: 1.45),
+                    style: LuxText.serif(context.fluid(wide ? 18 : 15, 24), height: 1.4),
                   ),
-                  const SizedBox(height: 18),
-                  // Download Status Notice Badge
+                  SizedBox(height: wide ? 18 : 12),
+                  // Card Status Notice Badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: Lux.gold.withValues(alpha: .15),
-                      border: Border.all(color: Lux.gold),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: wide ? 18 : 12,
+                      vertical: wide ? 12 : 8,
                     ),
-                    child: Row(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(18),
+                      color: Lux.gold.withValues(alpha: .14),
+                      border: Border.all(color: Lux.gold.withValues(alpha: .7)),
+                    ),
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.download_done_rounded, size: 20, color: Lux.goldDeep),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: Text(
-                            s.attendance == Attendance.accepts
-                                ? 'Your custom Wedding Invite Card has downloaded!'
-                                : 'Your personalized Greeting Card has downloaded!',
-                            style: LuxText.serif(14, weight: FontWeight.w600, color: Lux.goldDeep),
-                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.card_giftcard_rounded, size: wide ? 20 : 16, color: Lux.crimson),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                s.attendance == Attendance.accepts
+                                    ? 'Your Custom Wedding Invite Card is Ready'
+                                    : 'Your Personalized Greeting Card is Ready',
+                                style: LuxText.serif(wide ? 15 : 13, weight: FontWeight.w700, color: Lux.crimson),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Tap below to download or view and save your invitation to your photos.',
+                          textAlign: TextAlign.center,
+                          style: LuxText.body(wide ? 12 : 11, color: Lux.dark.withValues(alpha: .75)),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: wide ? 24 : 16),
                   Wrap(
                     alignment: WrapAlignment.center,
-                    spacing: 12,
-                    runSpacing: 10,
+                    spacing: wide ? 12 : 8,
+                    runSpacing: wide ? 10 : 8,
                     children: [
                       LuxuryButton(
-                        label: 'Preview Card 👁',
-                        onPressed: () => CardPreviewDialog.show(context, s.toSubmission()),
-                      ),
-                      LuxuryButton(
-                        label: 'Download Card Again 📥',
-                        filled: false,
+                        label: s.attendance == Attendance.accepts
+                            ? (wide ? 'Download Invite Card 📥' : 'Download Invite 📥')
+                            : (wide ? 'Download Greeting Card 📥' : 'Download Card 📥'),
+                        compact: !wide,
                         onPressed: () async {
                           const generator = CardGeneratorService();
                           await generator.generateAndDownload(s.toSubmission());
                         },
                       ),
                       LuxuryButton(
-                        label: 'View Guest List',
+                        label: wide ? 'View / Save Image 👁' : 'View Image 👁',
+                        compact: !wide,
                         filled: false,
-                        onPressed: () => _openGuestListDialog(context),
+                        onPressed: () => CardPreviewDialog.show(context, s.toSubmission()),
                       ),
                       LuxuryButton(
                         label: 'Edit reply',
+                        compact: !wide,
                         filled: false,
                         onPressed: () {
                           ctl.edit();
@@ -366,60 +412,60 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
             );
 
     return Stack(
+      clipBehavior: Clip.none,
       children: [
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.center,
-            child: SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: wide ? 0 : 16,
-                  vertical: 60,
+        OverflowBox(
+          alignment: Alignment.topCenter,
+          minHeight: 0,
+          maxHeight: double.infinity,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              wide ? 0 : 14,
+              wide ? 60 : 32,
+              wide ? 0 : 14,
+              wide ? 60 : 40,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ProgressReveal(
+                  progress: widget.p,
+                  start: 0.1,
+                  end: 0.34,
+                  child: SectionTitle(
+                    eyebrow: 'Aapnar Upasthiti Kamona Kori · Kindly Reply',
+                    title: 'Join our celebration',
+                    subtitle: 'Kindly reply by ${WeddingConfig.rsvpBy}',
+                  ),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ProgressReveal(
-                      progress: widget.p,
-                      start: 0.1,
-                      end: 0.34,
-                      child: SectionTitle(
-                        eyebrow: 'Aapnar Upasthiti Kamona Kori · Kindly Reply',
-                        title: 'Join our celebration',
-                        subtitle: 'Kindly reply by ${WeddingConfig.rsvpBy}',
+                SizedBox(height: wide ? 36 : 18),
+                ProgressReveal(
+                  progress: widget.p,
+                  start: 0.2,
+                  end: 0.5,
+                  dy: 80,
+                  dz: 180,
+                  blur: 14,
+                  child: PointerParallax(
+                    smoothing: 4,
+                    builder: (c, o, child) => Transform(
+                      alignment: Alignment.center,
+                      transform: depthMatrix(
+                        ry: o.dx * 0.04,
+                        rx: -o.dy * 0.03,
+                      ),
+                      child: child,
+                    ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 660),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 600),
+                        child: success ? thanks : form,
                       ),
                     ),
-                    const SizedBox(height: 36),
-                    ProgressReveal(
-                      progress: widget.p,
-                      start: 0.2,
-                      end: 0.5,
-                      dy: 80,
-                      dz: 180,
-                      blur: 14,
-                      child: PointerParallax(
-                        smoothing: 4,
-                        builder: (c, o, child) => Transform(
-                          alignment: Alignment.center,
-                          transform: depthMatrix(
-                            ry: o.dx * 0.04,
-                            rx: -o.dy * 0.03,
-                          ),
-                          child: child,
-                        ),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 660),
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 600),
-                            child: success ? thanks : form,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -437,6 +483,7 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
     TextInputType? type,
     int lines = 1,
     IconData? icon,
+    String? helperText,
   }) {
     return TextField(
       controller: c,
@@ -446,7 +493,12 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
       maxLines: lines,
       cursorColor: Lux.gold,
       style: LuxText.body(15.5, opacity: 1),
-      decoration: InputDecoration(labelText: label, errorText: err),
+      decoration: InputDecoration(
+        labelText: label,
+        errorText: err,
+        helperText: helperText,
+        helperStyle: LuxText.body(11.5, color: Lux.goldDeep, opacity: 0.9),
+      ),
     );
   }
 }
@@ -456,9 +508,10 @@ class _Choice extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
+    this.compact = false,
   });
   final String label;
-  final bool selected;
+  final bool selected, compact;
   final VoidCallback onTap;
 
   @override
@@ -468,7 +521,10 @@ class _Choice extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 350),
         curve: Motion.cinematic,
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        padding: EdgeInsets.symmetric(
+          vertical: compact ? 11 : 16,
+          horizontal: 8,
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: selected
@@ -483,7 +539,7 @@ class _Choice extends StatelessWidget {
           label,
           textAlign: TextAlign.center,
           style: LuxText.serif(
-            18,
+            compact ? 15 : 18,
             style: FontStyle.normal,
             weight: selected ? FontWeight.w700 : FontWeight.w500,
             color: selected ? Lux.goldDeep : Lux.dark,
@@ -516,196 +572,80 @@ class _Step extends StatelessWidget {
   );
 }
 
-class _GuestListDialog extends ConsumerWidget {
-  const _GuestListDialog();
+class _EventChoice extends StatelessWidget {
+  const _EventChoice({
+    required this.label,
+    required this.sublabel,
+    required this.selected,
+    required this.onTap,
+    this.compact = false,
+  });
+
+  final String label;
+  final String sublabel;
+  final bool selected, compact;
+  final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final guestsAsync = ref.watch(confirmedGuestsProvider);
-    final wide = MediaQuery.sizeOf(context).width >= 700;
-
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.symmetric(
-        horizontal: wide ? 40 : 16,
-        vertical: 24,
-      ),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 620, maxHeight: 640),
-        child: GlassPanel(
-          radius: 32,
-          padding: EdgeInsets.all(wide ? 32 : 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Confirmed Guests',
-                          style: LuxText.display(wide ? 28 : 22, color: Lux.crimson),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Celebrating together with blessings & love',
-                          style: LuxText.serif(14, style: FontStyle.italic),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close_rounded, color: Lux.dark),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              const Divider(color: Lux.champagne, height: 1),
-              const SizedBox(height: 12),
-              Expanded(
-                child: guestsAsync.when(
-                  data: (guests) {
-                    if (guests.isEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Text(
-                            'No replies confirmed yet.\nBe the first to say Joyfully Accepts!',
-                            textAlign: TextAlign.center,
-                            style: LuxText.serif(18, height: 1.5),
-                          ),
-                        ),
-                      );
-                    }
-                    final totalAttendees = guests.fold<int>(
-                      0,
-                      (sum, g) => sum + (g.guests > 0 ? g.guests : 1),
-                    );
-                    return Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '${guests.length} ${guests.length == 1 ? 'party' : 'parties'} · $totalAttendees attending',
-                              style: LuxText.body(13, color: Lux.goldDeep, opacity: 1),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: ListView.separated(
-                            itemCount: guests.length,
-                            separatorBuilder: (_, __) =>
-                                const Divider(color: Color(0x156B1E22), height: 12),
-                            itemBuilder: (context, index) {
-                              final g = guests[index];
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 6),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 36,
-                                      height: 36,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Lux.gold.withValues(alpha: .2),
-                                        border: Border.all(color: Lux.gold),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        g.name.isNotEmpty
-                                            ? g.name.trim()[0].toUpperCase()
-                                            : '?',
-                                        style: LuxText.serif(16,
-                                            weight: FontWeight.bold,
-                                            color: Lux.crimson),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 14),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  g.name,
-                                                  style: LuxText.serif(17,
-                                                      weight: FontWeight.w600,
-                                                      color: Lux.dark),
-                                                ),
-                                              ),
-                                              if (g.guests > 1)
-                                                Container(
-                                                  padding: const EdgeInsets.symmetric(
-                                                      horizontal: 8, vertical: 2),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(10),
-                                                    color: Lux.gold.withValues(alpha: .2),
-                                                  ),
-                                                  child: Text(
-                                                    '${g.guests} seats',
-                                                    style: LuxText.body(12,
-                                                        color: Lux.goldDeep,
-                                                        opacity: 1),
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                          if (g.message.isNotEmpty)
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 4),
-                                              child: Text(
-                                                '“${g.message}”',
-                                                style: LuxText.serif(14,
-                                                    style: FontStyle.italic,
-                                                    color: Lux.dark.withValues(alpha: .8)),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(color: Lux.gold),
-                  ),
-                  error: (err, _) => Center(
-                    child: Text(
-                      'Failed to load guest list.\n$err',
-                      textAlign: TextAlign.center,
-                      style: LuxText.body(14, color: const Color(0xFFB3463B)),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Center(
-                child: LuxuryButton(
-                  label: 'Close',
-                  filled: false,
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ),
-            ],
+  Widget build(BuildContext context) => CursorHover(
+    child: GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? 10 : 14,
+          vertical: compact ? 7 : 10,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: selected
+              ? Lux.gold.withValues(alpha: .22)
+              : Colors.white.withValues(alpha: .45),
+          border: Border.all(
+            color: selected ? Lux.gold : Lux.champagne,
+            width: selected ? 1.6 : 1,
           ),
         ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  selected
+                      ? Icons.check_circle_rounded
+                      : Icons.radio_button_unchecked_rounded,
+                  size: compact ? 13 : 15,
+                  color: selected ? Lux.crimson : Lux.dark.withValues(alpha: .4),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: LuxText.serif(
+                    compact ? 12.5 : 14,
+                    weight: selected ? FontWeight.w700 : FontWeight.w500,
+                    color: selected ? Lux.crimson : Lux.dark,
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: compact ? 19 : 21, top: 1),
+              child: Text(
+                sublabel,
+                style: LuxText.body(
+                  compact ? 10.5 : 11.5,
+                  color: selected ? Lux.goldDeep : Lux.dark.withValues(alpha: .6),
+                  opacity: 1,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
 }

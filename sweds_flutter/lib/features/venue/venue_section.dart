@@ -7,6 +7,7 @@ import '../../core/animations/motion.dart';
 import '../../core/animations/reveal.dart';
 import '../../core/constants/wedding_config.dart';
 import '../../core/scroll/scene_section.dart';
+import '../../core/scroll/scroll_engine.dart';
 import '../../core/scroll/section_spec.dart';
 import '../../core/theme/lux.dart';
 import '../../core/widgets/art_image.dart';
@@ -34,11 +35,12 @@ class _VenueStage extends StatelessWidget {
     final wide = w >= 900;
     final reveal = Motion.cinematic.transform(Motion.window(p, 0, 0.5));
     final settle = Motion.window(p, 0.3, 0.9);
-    final imgW = wide ? w * 0.38 : w * 0.78;
-    final imgH = wide ? h * 0.76 : h * 0.42;
+    final imgW = wide ? w * 0.38 : math.min(w * 0.65, 230.0);
+    final imgH = wide ? h * 0.76 : math.min(h * 0.16, 115.0);
     final imgLeft = wide ? w * 0.08 : (w - imgW) / 2;
-    final imgTop = wide ? (h - imgH) / 2 : h * 0.06;
-    final panelW = wide ? w * 0.38 : w * 0.90;
+    final imgTop = wide ? (h - imgH) / 2 : 12.0;
+    final panelW = wide ? w * 0.38 : math.min(w * 0.92, 440.0);
+    final cardTop = wide ? h * 0.14 : (imgTop + imgH + 10.0);
 
     return Stack(children: [
       // --- Layered arch: frame / photo / floating accents -------------------
@@ -85,17 +87,24 @@ class _VenueStage extends StatelessWidget {
               ),
               // front layer: floating glass seal
               Positioned(
-                right: -18 + o.dx * 16,
-                bottom: imgH * 0.12 + o.dy * 10,
+                right: wide ? (-18 + o.dx * 16) : (-8 + o.dx * 8),
+                bottom: wide ? (imgH * 0.12 + o.dy * 10) : (4 + o.dy * 4),
                 child: Opacity(
                   opacity: settle,
                   child: GlassPanel(
                     radius: 60,
                     blur: 14,
-                    padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: wide ? 22 : 14,
+                      vertical: wide ? 14 : 6,
+                    ),
                     child: Text(
                       WeddingConfig.venueCityShort,
-                      style: LuxText.serif(22, color: Lux.crimson, weight: FontWeight.w600),
+                      style: LuxText.serif(
+                        wide ? 22 : 14,
+                        color: Lux.crimson,
+                        weight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -108,7 +117,7 @@ class _VenueStage extends StatelessWidget {
       Positioned(
         left: wide ? null : (w - panelW) / 2,
         right: wide ? w * 0.06 : null,
-        top: wide ? h * 0.14 : h * 0.46,
+        top: cardTop,
         width: panelW,
         child: ProgressReveal(
           progress: p,
@@ -116,7 +125,10 @@ class _VenueStage extends StatelessWidget {
           end: 0.6,
           dy: 80,
           blur: 12,
-          child: _FlippingVenueCard(wide: wide),
+          child: _FlippingVenueCard(
+            wide: wide,
+            maxHeight: h - cardTop - 16,
+          ),
         ),
       ),
     ]);
@@ -124,8 +136,9 @@ class _VenueStage extends StatelessWidget {
 }
 
 class _FlippingVenueCard extends StatefulWidget {
-  const _FlippingVenueCard({required this.wide});
+  const _FlippingVenueCard({required this.wide, this.maxHeight});
   final bool wide;
+  final double? maxHeight;
 
   @override
   State<_FlippingVenueCard> createState() => _FlippingVenueCardState();
@@ -197,189 +210,232 @@ class _FlippingVenueCardState extends State<_FlippingVenueCard>
 
   Widget _buildVenueFace({required bool isReception}) {
     final schedule = isReception ? kReceptionSchedule : kWeddingSchedule;
-    final maxScheduleCount = widget.wide ? 4 : 3;
+    final maxScheduleCount = widget.wide ? 4 : 2;
+    final compact = !widget.wide;
 
-    return GlassPanel(
-      radius: 32,
-      padding: EdgeInsets.all(widget.wide ? 32 : 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Top Bar: Segmented Switcher & Flip Button
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: Lux.dark.withValues(alpha: .06),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: Lux.champagne),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _VenueTab(
-                      label: 'Wedding',
-                      icon: Icons.favorite_border_rounded,
-                      active: !isReception,
-                      onTap: () => _flipTo(false),
-                    ),
-                    _VenueTab(
-                      label: 'Reception',
-                      icon: Icons.celebration_outlined,
-                      active: isReception,
-                      onTap: () => _flipTo(true),
-                    ),
-                  ],
-                ),
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Top Bar: Segmented Switcher & Flip Button
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                color: Lux.dark.withValues(alpha: .06),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Lux.champagne),
               ),
-              const Spacer(),
-              CursorHover(
-                child: GestureDetector(
-                  onTap: _toggleFlip,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Lux.gold.withValues(alpha: .15),
-                      border: Border.all(color: Lux.gold),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.flip_rounded, size: 15, color: Lux.goldDeep),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Flip',
-                          style: LuxText.serif(12, weight: FontWeight.w700, color: Lux.goldDeep),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-
-          // Eyebrow Tag
-          Text(
-            isReception
-                ? 'THE RECEPTION VENUE · BOU BHAAT'
-                : 'THE WEDDING VENUE · SHUBHO BIBAHO',
-            style: LuxText.eyebrow(),
-          ),
-          const SizedBox(height: 6),
-
-          // Venue Name
-          Text(
-            isReception
-                ? WeddingConfig.receptionVenueName
-                : WeddingConfig.weddingVenueName,
-            style: LuxText.display(context.fluid(24, 42)),
-          ),
-          const SizedBox(height: 4),
-
-          // Date & Time
-          Row(
-            children: [
-              const Icon(Icons.event_outlined, size: 16, color: Lux.goldDeep),
-              const SizedBox(width: 6),
-              Text(
-                isReception
-                    ? '${WeddingConfig.receptionDateLabel} · ${WeddingConfig.receptionTimeLabel}'
-                    : '${WeddingConfig.weddingDateLabel} · ${WeddingConfig.weddingTimeLabel}',
-                style: LuxText.serif(
-                  context.fluid(13, 15),
-                  weight: FontWeight.w600,
-                  color: Lux.goldDeep,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-
-          // Address
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 2),
-                child: Icon(Icons.location_on_outlined, size: 16, color: Lux.crimson),
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  isReception
-                      ? WeddingConfig.receptionVenueAddress
-                      : WeddingConfig.weddingVenueAddress,
-                  style: LuxText.body(context.fluid(12.5, 14.5)),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-
-          Container(height: 1, color: Lux.champagne),
-          const SizedBox(height: 10),
-
-          // Schedule list
-          for (final (time, what) in schedule.take(maxScheduleCount))
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    width: 78,
-                    child: Text(
-                      time,
-                      style: LuxText.serif(
-                        16,
-                        style: FontStyle.normal,
-                        weight: FontWeight.w700,
-                        color: Lux.goldDeep,
-                      ),
-                    ),
+                  _VenueTab(
+                    label: 'Wedding',
+                    icon: Icons.favorite_border_rounded,
+                    active: !isReception,
+                    compact: compact,
+                    onTap: () => _flipTo(false),
                   ),
-                  Expanded(
-                    child: Text(
-                      what,
-                      style: LuxText.body(context.fluid(12.5, 13.5)),
-                    ),
+                  _VenueTab(
+                    label: 'Reception',
+                    icon: Icons.celebration_outlined,
+                    active: isReception,
+                    compact: compact,
+                    onTap: () => _flipTo(true),
                   ),
                 ],
               ),
             ),
-          const SizedBox(height: 14),
-
-          // Bottom Action Row
-          Wrap(
-            spacing: 12,
-            runSpacing: 8,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              LuxuryButton(
-                label: 'Open in Google Maps',
-                onPressed: () => launchUrl(
-                  Uri.parse(
-                    isReception
-                        ? WeddingConfig.receptionMapsUrl
-                        : WeddingConfig.weddingMapsUrl,
+            const Spacer(),
+            CursorHover(
+              child: GestureDetector(
+                onTap: _toggleFlip,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: compact ? 8 : 10,
+                    vertical: compact ? 4 : 6,
                   ),
-                  mode: LaunchMode.externalApplication,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Lux.gold.withValues(alpha: .15),
+                    border: Border.all(color: Lux.gold),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.flip_rounded, size: compact ? 13 : 15, color: Lux.goldDeep),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Flip',
+                        style: LuxText.serif(
+                          compact ? 11 : 12,
+                          weight: FontWeight.w700,
+                          color: Lux.goldDeep,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              LuxuryButton(
-                label: isReception ? 'View Wedding ↺' : 'View Reception ↻',
-                filled: false,
-                onPressed: _toggleFlip,
+            ),
+          ],
+        ),
+        SizedBox(height: compact ? 8 : 14),
+
+        // Eyebrow Tag
+        Text(
+          isReception
+              ? 'THE RECEPTION VENUE · BOU BHAAT'
+              : 'THE WEDDING VENUE · SHUBHO BIBAHO',
+          style: LuxText.eyebrow(),
+        ),
+        SizedBox(height: compact ? 3 : 6),
+
+        // Venue Name
+        Text(
+          isReception
+              ? WeddingConfig.receptionVenueName
+              : WeddingConfig.weddingVenueName,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: LuxText.display(context.fluid(compact ? 19 : 24, 42)),
+        ),
+        SizedBox(height: compact ? 2 : 4),
+
+        // Date & Time
+        Row(
+          children: [
+            Icon(Icons.event_outlined, size: compact ? 14 : 16, color: Lux.goldDeep),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                isReception
+                    ? '${WeddingConfig.receptionDateLabel} · ${WeddingConfig.receptionTimeLabel}'
+                    : '${WeddingConfig.weddingDateLabel} · ${WeddingConfig.weddingTimeLabel}',
+                style: LuxText.serif(
+                  context.fluid(compact ? 12 : 13, 15),
+                  weight: FontWeight.w600,
+                  color: Lux.goldDeep,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ],
+            ),
+          ],
+        ),
+        SizedBox(height: compact ? 2 : 4),
+
+        // Address
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Icon(Icons.location_on_outlined, size: compact ? 14 : 16, color: Lux.crimson),
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                isReception
+                    ? WeddingConfig.receptionVenueAddress
+                    : WeddingConfig.weddingVenueAddress,
+                maxLines: compact ? 2 : 3,
+                overflow: TextOverflow.ellipsis,
+                style: LuxText.body(context.fluid(compact ? 11.5 : 12.5, 14.5)),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: compact ? 8 : 14),
+
+        Container(height: 1, color: Lux.champagne),
+        SizedBox(height: compact ? 6 : 10),
+
+        // Schedule list
+        for (final (time, what) in schedule.take(maxScheduleCount))
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: compact ? 2 : 4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: compact ? 66 : 78,
+                  child: Text(
+                    time,
+                    style: LuxText.serif(
+                      compact ? 13 : 16,
+                      style: FontStyle.normal,
+                      weight: FontWeight.w700,
+                      color: Lux.goldDeep,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    what,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: LuxText.body(context.fluid(compact ? 11.5 : 12.5, 13.5)),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
+        SizedBox(height: compact ? 10 : 14),
+
+        // Bottom Action Row
+        Wrap(
+          spacing: compact ? 8 : 12,
+          runSpacing: compact ? 6 : 8,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            LuxuryButton(
+              label: widget.wide ? 'Open in Google Maps' : 'Maps 📍',
+              compact: compact,
+              onPressed: () => launchUrl(
+                Uri.parse(
+                  isReception
+                      ? WeddingConfig.receptionMapsUrl
+                      : WeddingConfig.weddingMapsUrl,
+                ),
+                mode: LaunchMode.externalApplication,
+              ),
+            ),
+            LuxuryButton(
+              label: widget.wide ? 'RSVP & Get Invite 💌' : 'RSVP 💌',
+              compact: compact,
+              filled: false,
+              onPressed: () => context.goToSection(Sec.rsvp),
+            ),
+            LuxuryButton(
+              label: widget.wide
+                  ? (isReception ? 'View Wedding ↺' : 'View Reception ↻')
+                  : (isReception ? 'Wedding ↺' : 'Reception ↻'),
+              compact: compact,
+              filled: false,
+              onPressed: _toggleFlip,
+            ),
+          ],
+        ),
+      ],
+    );
+
+    return GlassPanel(
+      radius: 32,
+      padding: EdgeInsets.symmetric(
+        horizontal: widget.wide ? 32 : 16,
+        vertical: widget.wide ? 26 : 14,
       ),
+      child: widget.maxHeight != null
+          ? ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: widget.maxHeight!),
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                child: content,
+              ),
+            )
+          : content,
     );
   }
 }
@@ -390,11 +446,12 @@ class _VenueTab extends StatelessWidget {
     required this.icon,
     required this.active,
     required this.onTap,
+    this.compact = false,
   });
 
   final String label;
   final IconData icon;
-  final bool active;
+  final bool active, compact;
   final VoidCallback onTap;
 
   @override
@@ -405,7 +462,10 @@ class _VenueTab extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          padding: EdgeInsets.symmetric(
+            horizontal: compact ? 10 : 14,
+            vertical: compact ? 4 : 6,
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             color: active ? Lux.gold : Colors.transparent,
@@ -415,14 +475,14 @@ class _VenueTab extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 14,
+                size: compact ? 12 : 14,
                 color: active ? Lux.dark : Lux.dark.withValues(alpha: .6),
               ),
-              const SizedBox(width: 5),
+              SizedBox(width: compact ? 4 : 5),
               Text(
                 label,
                 style: LuxText.serif(
-                  13,
+                  compact ? 11.5 : 13,
                   weight: active ? FontWeight.w700 : FontWeight.w500,
                   color: active ? Lux.dark : Lux.dark.withValues(alpha: .7),
                 ),

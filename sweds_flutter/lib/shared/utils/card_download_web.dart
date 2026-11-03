@@ -17,3 +17,7 @@ void triggerFileDownload(Uint8List bytes, String fileName) {
   anchor.remove();
   web.URL.revokeObjectURL(url);
 }
+
+void triggerOpenInNewTab(Uint8List bytes) {
+  //implement for web
+}

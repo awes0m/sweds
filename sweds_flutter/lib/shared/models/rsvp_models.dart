@@ -5,17 +5,20 @@ part 'rsvp_models.g.dart';
 
 enum Attendance { accepts, declines }
 
+enum AttendingEvents { both, weddingOnly, receptionOnly }
+
 enum RsvpStatus { editing, submitting, success, failure }
 
 @freezed
 abstract class RsvpSubmission with _$RsvpSubmission {
   const factory RsvpSubmission({
     required String name,
-    required String email,
+    @Default('') String email,
     required String phone,
     required Attendance attendance,
     required int guests,
     @Default('') String message,
+    @Default(AttendingEvents.both) AttendingEvents events,
   }) = _RsvpSubmission;
 
   factory RsvpSubmission.fromJson(Map<String, dynamic> json) =>
@@ -31,6 +34,7 @@ abstract class RsvpFormState with _$RsvpFormState {
     @Default('') String email,
     @Default('') String phone,
     @Default(Attendance.accepts) Attendance attendance,
+    @Default(AttendingEvents.both) AttendingEvents events,
     @Default(1) int guests,
     @Default('') String message,
     @Default(RsvpStatus.editing) RsvpStatus status,
@@ -38,9 +42,14 @@ abstract class RsvpFormState with _$RsvpFormState {
   }) = _RsvpFormState;
 
   String? get nameError => name.trim().length < 2 ? 'Please tell us your name' : null;
-  String? get emailError => RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email.trim())
-      ? null
-      : 'Enter a valid email address';
+  String? get emailError {
+    final trimmed = email.trim();
+    if (trimmed.isEmpty) return null;
+    return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(trimmed)
+        ? null
+        : 'Enter a valid email address';
+  }
+
   String? get phoneError =>
       RegExp(r'^[+()\-\s\d]{7,18}$').hasMatch(phone.trim()) ? null : 'Enter a valid number';
 
@@ -51,6 +60,7 @@ abstract class RsvpFormState with _$RsvpFormState {
         email: email.trim(),
         phone: phone.trim(),
         attendance: attendance,
+        events: attendance == Attendance.accepts ? events : AttendingEvents.both,
         guests: attendance == Attendance.accepts ? guests : 0,
         message: message.trim(),
       );

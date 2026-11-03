@@ -15,6 +15,9 @@ abstract interface class RsvpService {
   /// Real-time stream of confirmed guests.
   Stream<List<RsvpSubmission>> watchConfirmedGuests();
 
+  /// Real-time stream of all submissions (both accepts and declines).
+  Stream<List<RsvpSubmission>> watchAllSubmissions();
+
   /// Retrieves confirmed guests as raw JSON maps.
   Future<List<Map<String, dynamic>>> getConfirmedGuestsJson();
 
@@ -45,13 +48,14 @@ class FirestoreRsvpService implements RsvpService {
       'email': submission.email.trim(),
       'phone': submission.phone.trim(),
       'attendance': submission.attendance.name,
+      'events': submission.events.name,
       'guests': submission.guests,
       'message': submission.message.trim(),
       'submittedAt': FieldValue.serverTimestamp(),
     };
 
     debugPrint(
-      'FirestoreRsvpService submitting: ${submission.name} (${submission.attendance.name}, ${submission.email})',
+      'FirestoreRsvpService submitting: ${submission.name} (${submission.attendance.name}, ${submission.events.name}, ${submission.email})',
     );
     try {
       await _collection.add(payload);
@@ -63,6 +67,7 @@ class FirestoreRsvpService implements RsvpService {
         'email': submission.email.trim(),
         'phone': submission.phone.trim(),
         'attendance': submission.attendance.name,
+        'events': submission.events.name,
         'guests': submission.guests,
         'message': submission.message.trim(),
       };
@@ -87,6 +92,18 @@ class FirestoreRsvpService implements RsvpService {
   Stream<List<RsvpSubmission>> watchConfirmedGuests() {
     return _collection
         .where('attendance', isEqualTo: 'accepts')
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => _tryParseSubmission(doc.data()))
+              .whereType<RsvpSubmission>()
+              .toList(),
+        );
+  }
+
+  @override
+  Stream<List<RsvpSubmission>> watchAllSubmissions() {
+    return _collection
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
@@ -151,6 +168,11 @@ class MockRsvpService implements RsvpService {
   @override
   Stream<List<RsvpSubmission>> watchConfirmedGuests() async* {
     yield await getConfirmedGuests();
+  }
+
+  @override
+  Stream<List<RsvpSubmission>> watchAllSubmissions() async* {
+    yield List.unmodifiable(_items);
   }
 
   @override

@@ -13,8 +13,10 @@ class TimelineSection extends StatelessWidget {
   const TimelineSection({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      SceneSection(index: Sec.timeline, builder: (c, p, size) => _TimelineStage(p: p, size: size));
+  Widget build(BuildContext context) => SceneSection(
+    index: Sec.timeline,
+    builder: (c, p, size) => _TimelineStage(p: p, size: size),
+  );
 }
 
 /// Vertical scroll scrubs a horizontal rail. Cards rise out of depth as they
@@ -37,58 +39,99 @@ class _TimelineStage extends StatelessWidget {
     final cardH = (h * 0.44).clamp(300.0, 400.0);
     final active = f.round().clamp(0, n - 1);
 
-    return Stack(children: [
-      Positioned(
-        left: w >= 900 ? 64 : 22,
-        top: h * (w >= 900 ? .10 : .09),
-        right: 22,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('THE CELEBRATIONS', style: LuxText.eyebrow(Lux.crimson)),
-              const SizedBox(height: 10),
-              Text('Five Days of Joy & Traditions', style: LuxText.display(context.fluid(30, 60))),
-            ]),
-            const Spacer(),
-            Text('0${active + 1} / 0$n', style: LuxText.serif(context.fluid(22, 34), style: FontStyle.normal, color: Lux.goldDeep, spacing: 3)),
-          ],
-        ),
-      ),
-      Positioned(
-        left: 0,
-        top: h * 0.30,
-        child: Transform.translate(
-          offset: Offset(-f * step, 0),
-          child: SizedBox(
-            width: rowW,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              SizedBox(
-                height: cardH,
-                child: Row(children: [
-                  SizedBox(width: pad),
-                  for (var i = 0; i < n; i++) ...[
-                    _EventCard(event: kEvents[i], index: i, d: i - f, width: cw, height: cardH),
-                    SizedBox(width: i == n - 1 ? pad : gap),
-                  ],
-                ]),
+    return Stack(
+      children: [
+        Positioned(
+          left: w >= 900 ? 64 : 22,
+          top: h * (w >= 900 ? .10 : .09),
+          right: 22,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('THE CELEBRATIONS', style: LuxText.eyebrow(Lux.crimson)),
+                  const SizedBox(height: 10),
+                  Text(
+                    '4 Days ৫ Traditions',
+                    style: LuxText.display(context.fluid(30, 60)),
+                  ),
+                ],
               ),
-              const SizedBox(height: 26),
-              SizedBox(
-                height: 70,
-                width: rowW,
-                child: CustomPaint(painter: _RailPainter(n: n, cw: cw, gap: gap, pad: pad, f: f)),
+              const Spacer(),
+              Text(
+                '0${active + 1} / 0$n',
+                style: LuxText.serif(
+                  context.fluid(22, 34),
+                  style: FontStyle.normal,
+                  color: Lux.goldDeep,
+                  spacing: 3,
+                ),
               ),
-            ]),
+            ],
           ),
         ),
-      ),
-    ]);
+        Positioned(
+          left: 0,
+          top: h * 0.30,
+          child: Transform.translate(
+            offset: Offset(-f * step, 0),
+            child: SizedBox(
+              width: rowW,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: cardH,
+                    child: Row(
+                      children: [
+                        SizedBox(width: pad),
+                        for (var i = 0; i < n; i++) ...[
+                          _EventCard(
+                            event: kEvents[i],
+                            index: i,
+                            d: i - f,
+                            width: cw,
+                            height: cardH,
+                          ),
+                          SizedBox(width: i == n - 1 ? pad : gap),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 26),
+                  SizedBox(
+                    height: 70,
+                    width: rowW,
+                    child: CustomPaint(
+                      painter: _RailPainter(
+                        n: n,
+                        cw: cw,
+                        gap: gap,
+                        pad: pad,
+                        f: f,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
 class _EventCard extends StatelessWidget {
-  const _EventCard({required this.event, required this.index, required this.d, required this.width, required this.height});
+  const _EventCard({
+    required this.event,
+    required this.index,
+    required this.d,
+    required this.width,
+    required this.height,
+  });
   final WeddingEvent event;
   final int index;
   final double d, width, height;
@@ -112,21 +155,45 @@ class _EventCard extends StatelessWidget {
           child: GlassPanel(
             radius: 30,
             padding: const EdgeInsets.all(26),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                Text('0${index + 1}', style: LuxText.display(34, color: Lux.crimson, style: FontStyle.italic)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '0${index + 1}',
+                      style: LuxText.display(
+                        34,
+                        color: Lux.crimson,
+                        style: FontStyle.italic,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      event.date.toUpperCase(),
+                      style: LuxText.eyebrow(
+                        Lux.crimson,
+                      ).copyWith(fontSize: 13, letterSpacing: 3),
+                    ),
+                  ],
+                ),
                 const Spacer(),
-                Text(event.date.toUpperCase(), style: LuxText.eyebrow(Lux.crimson).copyWith(fontSize: 13, letterSpacing: 3)),
-              ]),
-              const Spacer(),
-              Text(event.name, style: LuxText.display(context.fluid(30, 42))),
-              const SizedBox(height: 8),
-              Text('${event.time}  ·  ${event.place}', style: LuxText.serif(18, color: Lux.crimson, weight: FontWeight.w600)),
-              const SizedBox(height: 14),
-              Container(width: 40, height: 1.5, color: Lux.gold),
-              const SizedBox(height: 14),
-              Text(event.blurb, style: LuxText.body(14.5, height: 1.65)),
-            ]),
+                Text(event.name, style: LuxText.display(context.fluid(30, 42))),
+                const SizedBox(height: 8),
+                Text(
+                  '${event.time}  ·  ${event.place}',
+                  style: LuxText.serif(
+                    18,
+                    color: Lux.crimson,
+                    weight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Container(width: 40, height: 1.5, color: Lux.gold),
+                const SizedBox(height: 14),
+                Text(event.blurb, style: LuxText.body(14.5, height: 1.65)),
+              ],
+            ),
           ),
         ),
       ),
@@ -135,7 +202,13 @@ class _EventCard extends StatelessWidget {
 }
 
 class _RailPainter extends CustomPainter {
-  _RailPainter({required this.n, required this.cw, required this.gap, required this.pad, required this.f});
+  _RailPainter({
+    required this.n,
+    required this.cw,
+    required this.gap,
+    required this.pad,
+    required this.f,
+  });
   final int n;
   final double cw, gap, pad, f;
 
@@ -168,7 +241,10 @@ class _RailPainter extends CustomPainter {
       Offset(x0, y),
       Offset(ax, y),
       Paint()
-        ..shader = LinearGradient(colors: [Lux.goldDeep, Lux.goldLight]).createShader(Rect.fromPoints(Offset(x0, y), Offset(math.max(ax, x0 + 1), y)))
+        ..shader = LinearGradient(colors: [Lux.goldDeep, Lux.goldLight])
+            .createShader(
+              Rect.fromPoints(Offset(x0, y), Offset(math.max(ax, x0 + 1), y)),
+            )
         ..strokeWidth = 2.2
         ..strokeCap = StrokeCap.round,
     );
@@ -178,9 +254,17 @@ class _RailPainter extends CustomPainter {
       final near = (1 - (i - f).abs()).clamp(0.0, 1.0);
       final reached = i <= f + 0.01;
       if (near > 0) {
-        canvas.drawCircle(Offset(cx, y), 12 + 14 * near, Paint()..color = Lux.gold.withValues(alpha: 0.18 * near));
+        canvas.drawCircle(
+          Offset(cx, y),
+          12 + 14 * near,
+          Paint()..color = Lux.gold.withValues(alpha: 0.18 * near),
+        );
       }
-      canvas.drawCircle(Offset(cx, y), 5 + 4 * near, Paint()..color = reached ? Lux.gold : Lux.ivory);
+      canvas.drawCircle(
+        Offset(cx, y),
+        5 + 4 * near,
+        Paint()..color = reached ? Lux.gold : Lux.ivory,
+      );
       canvas.drawCircle(
         Offset(cx, y),
         5 + 4 * near,
@@ -191,10 +275,17 @@ class _RailPainter extends CustomPainter {
       );
     }
     // Travelling spark.
-    canvas.drawCircle(Offset(ax, y), 9, Paint()..color = Colors.white.withValues(alpha: 0.9)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
+    canvas.drawCircle(
+      Offset(ax, y),
+      9,
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.9)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+    );
     canvas.drawCircle(Offset(ax, y), 3.2, Paint()..color = Lux.goldLight);
   }
 
   @override
-  bool shouldRepaint(_RailPainter old) => old.f != f || old.cw != cw || old.pad != pad;
+  bool shouldRepaint(_RailPainter old) =>
+      old.f != f || old.cw != cw || old.pad != pad;
 }

@@ -33,7 +33,7 @@ const kSections = <SectionSpec>[
   SectionSpec('venue', 'Venue', 2.0, pinned: true),
   SectionSpec('gallery', 'Gallery', 1.7, minHeight: 1500),
   SectionSpec('countdown', 'Countdown', 1.1, minHeight: 760),
-  SectionSpec('rsvp', 'RSVP', 1.25, minHeight: 1000),
+  SectionSpec('rsvp', 'RSVP', 1.4, minHeight: 1250),
   SectionSpec('footer', 'Farewell', 0.8, minHeight: 520),
 ];
 

@@ -27,14 +27,30 @@ void main() {
       expect(bytes[3], 0x47);
     });
 
-    test('generates valid PNG bytes for declined RSVP greeting card', () async {
+    test('generates valid PNG bytes for weddingOnly event selection', () async {
       const submission = RsvpSubmission(
-        name: 'Priyanka Sen',
-        email: 'priyanka@example.com',
-        phone: '+919123456780',
-        attendance: Attendance.declines,
-        guests: 0,
-        message: 'Wishing you both a lifetime of happiness.',
+        name: 'Amit Mukherjee',
+        phone: '+919876543210',
+        attendance: Attendance.accepts,
+        events: AttendingEvents.weddingOnly,
+        guests: 1,
+      );
+
+      final bytes = await generator.generateCardBytes(submission);
+      expect(bytes.isNotEmpty, isTrue);
+      expect(bytes[0], 0x89);
+      expect(bytes[1], 0x50);
+      expect(bytes[2], 0x4E);
+      expect(bytes[3], 0x47);
+    });
+
+    test('generates valid PNG bytes for receptionOnly event selection', () async {
+      const submission = RsvpSubmission(
+        name: 'Suman Roy',
+        phone: '+919876543211',
+        attendance: Attendance.accepts,
+        events: AttendingEvents.receptionOnly,
+        guests: 3,
       );
 
       final bytes = await generator.generateCardBytes(submission);

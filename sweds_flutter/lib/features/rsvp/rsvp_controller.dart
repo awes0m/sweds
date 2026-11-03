@@ -17,6 +17,7 @@ class RsvpController extends _$RsvpController {
   void setPhone(String v) => state = state.copyWith(phone: v);
   void setMessage(String v) => state = state.copyWith(message: v);
   void setAttendance(Attendance a) => state = state.copyWith(attendance: a);
+  void setEvents(AttendingEvents e) => state = state.copyWith(events: e);
   void setGuests(int g) => state = state.copyWith(guests: g.clamp(1, 6));
 
   Future<void> submit() async {

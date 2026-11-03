@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/constants/wedding_config.dart';
@@ -72,6 +73,10 @@ RsvpService rsvpService(Ref ref) => FirestoreRsvpService();
 Stream<List<RsvpSubmission>> confirmedGuests(Ref ref) {
   return ref.watch(rsvpServiceProvider).watchConfirmedGuests();
 }
+
+final allSubmissionsProvider = StreamProvider<List<RsvpSubmission>>((ref) {
+  return ref.watch(rsvpServiceProvider).watchAllSubmissions();
+});
 
 @riverpod
 Stream<Duration> countdown(Ref ref) async* {

@@ -9,11 +9,14 @@ part of 'rsvp_models.dart';
 _RsvpSubmission _$RsvpSubmissionFromJson(Map<String, dynamic> json) =>
     _RsvpSubmission(
       name: json['name'] as String,
-      email: json['email'] as String,
+      email: json['email'] as String? ?? '',
       phone: json['phone'] as String,
       attendance: $enumDecode(_$AttendanceEnumMap, json['attendance']),
       guests: (json['guests'] as num).toInt(),
       message: json['message'] as String? ?? '',
+      events:
+          $enumDecodeNullable(_$AttendingEventsEnumMap, json['events']) ??
+          AttendingEvents.both,
     );
 
 Map<String, dynamic> _$RsvpSubmissionToJson(_RsvpSubmission instance) =>
@@ -24,9 +27,16 @@ Map<String, dynamic> _$RsvpSubmissionToJson(_RsvpSubmission instance) =>
       'attendance': _$AttendanceEnumMap[instance.attendance]!,
       'guests': instance.guests,
       'message': instance.message,
+      'events': _$AttendingEventsEnumMap[instance.events]!,
     };
 
 const _$AttendanceEnumMap = {
   Attendance.accepts: 'accepts',
   Attendance.declines: 'declines',
+};
+
+const _$AttendingEventsEnumMap = {
+  AttendingEvents.both: 'both',
+  AttendingEvents.weddingOnly: 'weddingOnly',
+  AttendingEvents.receptionOnly: 'receptionOnly',
 };

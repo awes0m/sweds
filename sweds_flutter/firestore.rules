@@ -11,10 +11,11 @@ rules_version = '2';
 //
 // Fields:
 //   - name: string (required, 1-100 chars) - Full name of the guest
-//   - email: string (required, valid email, 5-100 chars) - Guest contact email
+//   - email: string (optional, 0 or 5-100 chars, valid email format if non-empty) - Guest contact email
 //   - phone: string (required, 7-25 chars) - Guest contact phone number
 //   - attendance: string (required, 'accepts' or 'declines') - Attendance decision
 //   - guests: int (required, 0-10) - Number of additional/accompanying guests
+//   - events: string (optional, 'both' | 'weddingOnly' | 'receptionOnly') - Attending event scope
 //   - message: string (optional, 0-1000 chars) - Congratulatory note or message
 //   - submittedAt: timestamp (optional) - Server timestamp of the submission
 //
@@ -72,6 +73,12 @@ service cloud.firestore {
         email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
     }
 
+    // Validate optional email: accepted if omitted or empty string; if non-empty, must be valid email (5-100 chars)
+    function isValidOptionalEmail(data) {
+      return !('email' in data) ||
+        (data.email is string && (data.email == '' || isValidEmail(data.email)));
+    }
+
     // Validate phone number: string, length 7-25, standard phone characters
     function isValidPhone(phone) {
       return phone is string &&
@@ -91,6 +98,13 @@ service cloud.firestore {
       return guests is int &&
         guests >= 0 &&
         guests <= 10;
+    }
+
+    // Validate optional events: if provided, must be one of 'both', 'weddingOnly', or 'receptionOnly'
+    function isValidEvents(data) {
+      return !('events' in data) ||
+        (data.events is string &&
+          (data.events == 'both' || data.events == 'weddingOnly' || data.events == 'receptionOnly'));
     }
 
     // Validate optional message: if provided, must be string <= 1000 characters
@@ -116,15 +130,16 @@ service cloud.firestore {
 
     // Strict validator enforcing complete schema integrity for RSVPs
     function isValidRsvp(data) {
-      return hasOnlyAllowedFields(data, ['name', 'email', 'phone', 'attendance', 'guests', 'message', 'submittedAt']) &&
-        hasRequiredFields(data, ['name', 'email', 'phone', 'attendance', 'guests']) &&
+      return hasOnlyAllowedFields(data, ['name', 'email', 'phone', 'attendance', 'guests', 'events', 'message', 'submittedAt']) &&
+        hasRequiredFields(data, ['name', 'phone', 'attendance', 'guests']) &&
         data.name is string &&
         data.name.size() >= 1 &&
         data.name.size() <= 100 &&
-        isValidEmail(data.email) &&
+        isValidOptionalEmail(data) &&
         isValidPhone(data.phone) &&
         isValidAttendance(data.attendance) &&
         isValidGuests(data.guests) &&
+        isValidEvents(data) &&
         isValidMessage(data) &&
         isValidSubmittedAt(data);
     }

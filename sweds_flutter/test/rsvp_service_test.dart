@@ -19,11 +19,31 @@ void main() {
       expect(json['email'], 'john@example.com');
       expect(json['phone'], '+1234567890');
       expect(json['attendance'], 'accepts');
+      expect(json['events'], 'both');
       expect(json['guests'], 2);
       expect(json['message'], 'Congratulations!');
 
       final parsed = RsvpSubmission.fromJson(json);
       expect(parsed, equals(sub));
+    });
+
+    test('serializes with empty optional email and specific event', () {
+      const sub = RsvpSubmission(
+        name: 'Sayantika Fan',
+        phone: '+919876543210',
+        attendance: Attendance.accepts,
+        events: AttendingEvents.weddingOnly,
+        guests: 1,
+      );
+
+      final json = sub.toJson();
+      expect(json['email'], '');
+      expect(json['events'], 'weddingOnly');
+
+      final parsed = RsvpSubmission.fromJson(json);
+      expect(parsed, equals(sub));
+      expect(parsed.email, isEmpty);
+      expect(parsed.events, AttendingEvents.weddingOnly);
     });
   });
 
