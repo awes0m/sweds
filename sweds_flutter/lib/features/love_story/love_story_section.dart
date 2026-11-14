@@ -34,7 +34,7 @@ class _StoryStage extends ConsumerWidget {
     final n = kStory.length;
     final f = p * (n - 1);
     final wide = size.width >= 900;
-    final pad = wide ? 64.0 : 22.0;
+    final pad = wide ? 64.0 : 18.0;
     final active = f.round().clamp(0, n - 1);
     final order = List<int>.generate(n, (i) => i)
       ..sort((a, b) => (f - b).abs().compareTo((f - a).abs())); // far → near
@@ -44,12 +44,12 @@ class _StoryStage extends ConsumerWidget {
       for (final i in order) _card(context, i, f - i, wide, depth),
       Positioned(
         left: pad,
-        top: size.height * (wide ? .10 : .085),
+        top: size.height * (wide ? .10 : .065),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('CHAPTER ${active + 1} OF $n', style: LuxText.eyebrow()),
-          const SizedBox(height: 10),
-          Text('Our Story', style: LuxText.display(context.fluid(34, 64))),
-          const SizedBox(height: 14),
+          Text('CHAPTER ${active + 1} OF $n', style: LuxText.eyebrow(Lux.crimson)),
+          const SizedBox(height: 8),
+          Text('Our Story', style: LuxText.display(context.fluid(28, 64))),
+          const SizedBox(height: 12),
           Row(children: [
             for (var i = 0; i < n; i++)
               AnimatedContainer(
@@ -57,8 +57,11 @@ class _StoryStage extends ConsumerWidget {
                 curve: Motion.cinematic,
                 margin: const EdgeInsets.only(right: 6),
                 width: i == active ? 38 : 12,
-                height: 2,
-                color: i == active ? Lux.gold : Lux.champagne,
+                height: 2.5,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(2),
+                  color: i == active ? Lux.crimson : Lux.champagne,
+                ),
               ),
           ]),
         ]),
@@ -84,7 +87,12 @@ class _StoryStage extends ConsumerWidget {
         dy: dy,
         dz: -ad * 160 * depth,
       ),
-      child: Opacity(opacity: opacity, child: RepaintBoundary(child: _StoryCard(chapter: kStory[i], size: size, wide: wide))),
+      child: Opacity(
+        opacity: opacity,
+        child: RepaintBoundary(
+          child: _StoryCard(chapter: kStory[i], size: size, wide: wide),
+        ),
+      ),
     );
     if (sigma > 0.3) {
       w = ImageFiltered(
@@ -113,7 +121,7 @@ class _Numeral extends StatelessWidget {
           offset: Offset(side * size.width * 0.16, -d * size.height * 0.35 * depth),
           child: Align(
             alignment: Alignment(side * 0.2, 0),
-            child: Text('0${index + 1}', style: LuxText.outline(context.fluid(200, 420))),
+            child: Text('0${index + 1}', style: LuxText.outline(context.fluid(130, 420))),
           ),
         ),
       ),
@@ -129,18 +137,30 @@ class _StoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardW = wide ? math.min(size.width * 0.74, 1020.0) : size.width * 0.9;
+    final cardW = wide ? math.min(size.width * 0.74, 1020.0) : math.min(size.width * 0.92, 420.0);
     final text = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(chapter.date.toUpperCase(), style: LuxText.eyebrow()),
-        const SizedBox(height: 12),
-        Text(chapter.title, style: LuxText.display(context.fluid(26, 46))),
-        const SizedBox(height: 14),
-        Container(width: 48, height: 1, color: Lux.gold),
-        const SizedBox(height: 14),
-        Text(chapter.body, style: LuxText.body(context.fluid(14, 16.5), height: 1.75)),
+        Text(chapter.date.toUpperCase(), style: LuxText.eyebrow(Lux.crimson)),
+        const SizedBox(height: 8),
+        Text(
+          chapter.title,
+          style: LuxText.display(context.fluid(20, 44), weight: FontWeight.w600),
+        ),
+        const SizedBox(height: 10),
+        Container(
+          width: 44,
+          height: 1.5,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(colors: [Lux.crimson, Lux.gold]),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          chapter.body,
+          style: LuxText.body(context.fluid(13, 16), height: 1.6),
+        ),
       ],
     );
 
@@ -149,35 +169,49 @@ class _StoryCard extends StatelessWidget {
       return SizedBox(
         width: cardW,
         child: GlassPanel(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(22),
           radius: 32,
           child: Row(children: [
             SizedBox(
-              width: imgH * 0.8,
+              width: imgH * 0.85,
               height: imgH,
-              child: ArtImage(name: chapter.image, seed: chapter.seed, radius: 22),
+              child: ArtImage(
+                name: chapter.image,
+                seed: chapter.seed,
+                radius: 20,
+                gracefulFit: true,
+              ),
             ),
-            const SizedBox(width: 40),
+            const SizedBox(width: 36),
             Expanded(child: text),
-            const SizedBox(width: 20),
+            const SizedBox(width: 16),
           ]),
         ),
       );
     }
+
     return SizedBox(
       width: cardW,
       child: GlassPanel(
         padding: const EdgeInsets.all(14),
-        radius: 28,
+        radius: 26,
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           SizedBox(
-            height: size.height * 0.2,
+            height: (size.height * 0.25).clamp(165.0, 220.0),
             width: double.infinity,
-            child: ArtImage(name: chapter.image, seed: chapter.seed, radius: 18),
+            child: ArtImage(
+              name: chapter.image,
+              seed: chapter.seed,
+              radius: 18,
+              gracefulFit: true,
+            ),
           ),
-          const SizedBox(height: 18),
-          Padding(padding: const EdgeInsets.symmetric(horizontal: 6), child: text),
-          const SizedBox(height: 6),
+          const SizedBox(height: 14),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: text,
+          ),
+          const SizedBox(height: 4),
         ]),
       ),
     );

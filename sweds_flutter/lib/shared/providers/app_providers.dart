@@ -78,6 +78,18 @@ final allSubmissionsProvider = StreamProvider<List<RsvpSubmission>>((ref) {
   return ref.watch(rsvpServiceProvider).watchAllSubmissions();
 });
 
+class MobileSidebarNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+  void toggle() => state = !state;
+  void set(bool v) => state = v;
+  void open() => state = true;
+  void close() => state = false;
+}
+
+final mobileSidebarOpenProvider =
+    NotifierProvider<MobileSidebarNotifier, bool>(MobileSidebarNotifier.new);
+
 @riverpod
 Stream<Duration> countdown(Ref ref) async* {
   while (true) {

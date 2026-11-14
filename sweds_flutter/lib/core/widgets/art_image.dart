@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
@@ -15,19 +16,60 @@ class ArtImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.radius = 0,
     this.cacheWidth = 1400,
+    this.gracefulFit = false,
   });
   final String name;
   final int seed;
   final BoxFit fit;
   final double radius;
   final int cacheWidth;
+  final bool gracefulFit;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
-      child: Image.asset(
-        'assets/images/$name.jpg',
+    final assetPath = 'assets/images/$name.jpg';
+
+    Widget imageContent;
+
+    if (gracefulFit) {
+      imageContent = Stack(
+        fit: StackFit.expand,
+        children: [
+          // Ambient blurred background so container is filled without harsh borders
+          Image.asset(
+            assetPath,
+            fit: BoxFit.cover,
+            cacheWidth: 300,
+            filterQuality: FilterQuality.low,
+            errorBuilder: (context, error, stack) => const SizedBox.shrink(),
+          ),
+          Positioned.fill(
+            child: BackdropFilter(
+              filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: ColoredBox(color: Lux.background.withValues(alpha: 0.35)),
+            ),
+          ),
+          // Foreground: complete, un-cropped photograph gracefully fitted
+          Center(
+            child: Image.asset(
+              assetPath,
+              fit: BoxFit.contain,
+              cacheWidth: cacheWidth,
+              filterQuality: FilterQuality.medium,
+              frameBuilder: (context, child, frame, sync) => AnimatedOpacity(
+                opacity: (frame == null && !sync) ? 0 : 1,
+                duration: const Duration(milliseconds: 700),
+                child: child,
+              ),
+              errorBuilder: (context, error, stack) =>
+                  CustomPaint(painter: _ArtPainter(seed), child: const SizedBox.expand()),
+            ),
+          ),
+        ],
+      );
+    } else {
+      imageContent = Image.asset(
+        assetPath,
         fit: fit,
         cacheWidth: cacheWidth,
         filterQuality: FilterQuality.medium,
@@ -38,7 +80,12 @@ class ArtImage extends StatelessWidget {
         ),
         errorBuilder: (context, error, stack) =>
             CustomPaint(painter: _ArtPainter(seed), child: const SizedBox.expand()),
-      ),
+      );
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: imageContent,
     );
   }
 }

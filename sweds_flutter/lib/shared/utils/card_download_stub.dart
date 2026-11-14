@@ -4,6 +4,6 @@ void triggerFileDownload(Uint8List bytes, String fileName) {
   // Non-web environments (tests, CLI, desktop fallback).
 }
 
-void triggerOpenInNewTab(Uint8List bytes) {
+void triggerOpenInNewTab(Uint8List bytes, [String fileName = 'card.png']) {
   // Non-web environments.
 }

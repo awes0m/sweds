@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../features/menu/menu_page.dart';
 import '../../features/rsvp/secret_guest_list_page.dart';
 import '../../features/shell/experience_page.dart';
 
@@ -18,6 +19,13 @@ GoRouter appRouter(Ref ref) => GoRouter(
           pageBuilder: (context, state) => NoTransitionPage(
             key: const ValueKey('experience'),
             child: ExperiencePage(section: state.uri.queryParameters['s']),
+          ),
+        ),
+        GoRoute(
+          path: '/menu',
+          pageBuilder: (context, state) => const NoTransitionPage(
+            key: ValueKey('menu_page'),
+            child: MenuPage(),
           ),
         ),
         GoRoute(

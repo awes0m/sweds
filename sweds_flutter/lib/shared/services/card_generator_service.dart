@@ -3,18 +3,49 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 import '../../core/constants/wedding_config.dart';
 import '../models/rsvp_models.dart';
 import '../utils/card_download.dart';
 
-/// Generates authentic Bengali wedding invitation and greeting cards (PNG)
+/// Generates authentic Bengali wedding invitation and greeting cards (PNG & PDF)
 /// styled in royal bridal red and gold foil calligraphy with traditional motifs.
+/// The generated PDF contains interactive clickable links for Google Maps locations
+/// and the feast menu (https://sweds26.web.app/menu).
 class CardGeneratorService {
   const CardGeneratorService();
 
   static const double cardWidth = 1080;
   static const double cardHeight = 1520;
+  static const String menuUrl = 'https://sweds26.web.app/menu';
+
+  /// Coordinates for the clickable action buttons on the card (used for both Canvas and PDF).
+  static Rect getWeddingMapButtonRect(AttendingEvents events) {
+    if (events == AttendingEvents.both) {
+      const y = 1076.0;
+      const w = (cardWidth - 220) / 2;
+      return const Rect.fromLTWH(100, y, w, 50);
+    }
+    return const Rect.fromLTWH(180, 960, cardWidth - 360, 52);
+  }
+
+  static Rect getReceptionMapButtonRect(AttendingEvents events) {
+    if (events == AttendingEvents.both) {
+      const y = 1076.0;
+      const w = (cardWidth - 220) / 2;
+      return const Rect.fromLTWH(100 + w + 20, y, w, 50);
+    }
+    return const Rect.fromLTWH(180, 960, cardWidth - 360, 52);
+  }
+
+  static Rect getMenuButtonRect(AttendingEvents events) {
+    if (events == AttendingEvents.both) {
+      return const Rect.fromLTWH(140, 1140, cardWidth - 280, 54);
+    }
+    return const Rect.fromLTWH(140, 1030, cardWidth - 280, 54);
+  }
 
   /// Default invitation submission for guests previewing/downloading the card directly.
   static RsvpSubmission defaultInviteSubmission({String name = 'Honored Guest'}) =>
@@ -79,7 +110,7 @@ class CardGeneratorService {
     return byteData!.buffer.asUint8List();
   }
 
-  /// Generates card and triggers browser/device file download.
+  /// Generates card and triggers PNG download.
   Future<Uint8List> generateAndDownload(RsvpSubmission submission) async {
     final bytes = await generateCardBytes(submission);
     final isAccept = submission.attendance == Attendance.accepts;
@@ -95,107 +126,207 @@ class CardGeneratorService {
     return bytes;
   }
 
+  /// Generates the invitation card PDF file with interactive, clickable links:
+  /// - Clickable Google Maps links for the accepted events
+  /// - Clickable Feast Menu button linking to "https://sweds26.web.app/menu"
+  Future<Uint8List> generateInvitePdfBytes(RsvpSubmission submission) async {
+    final isAccept = submission.attendance == Attendance.accepts;
+    final cardPngBytes = await generateCardBytes(submission);
+
+    final pdf = pw.Document(
+      title: isAccept
+          ? 'Wedding Invitation - ${submission.name}'
+          : 'Wedding Greeting - ${submission.name}',
+      author: 'Sayantika & Som',
+    );
+
+    final bgImage = pw.MemoryImage(cardPngBytes);
+    const pageFormat = PdfPageFormat(cardWidth, cardHeight);
+
+    final linkOverlays = <pw.Widget>[];
+
+    if (isAccept) {
+      // 1. Google Maps link for Wedding (if events == both or weddingOnly)
+      if (submission.events == AttendingEvents.both ||
+          submission.events == AttendingEvents.weddingOnly) {
+        final r = getWeddingMapButtonRect(submission.events);
+        linkOverlays.add(
+          pw.Positioned(
+            left: r.left,
+            top: r.top,
+            child: pw.UrlLink(
+              destination: WeddingConfig.weddingMapsUrl,
+              child: pw.SizedBox(
+                width: r.width,
+                height: r.height,
+              ),
+            ),
+          ),
+        );
+      }
+
+      // 2. Google Maps link for Reception (if events == both or receptionOnly)
+      if (submission.events == AttendingEvents.both ||
+          submission.events == AttendingEvents.receptionOnly) {
+        final r = getReceptionMapButtonRect(submission.events);
+        linkOverlays.add(
+          pw.Positioned(
+            left: r.left,
+            top: r.top,
+            child: pw.UrlLink(
+              destination: WeddingConfig.receptionMapsUrl,
+              child: pw.SizedBox(
+                width: r.width,
+                height: r.height,
+              ),
+            ),
+          ),
+        );
+      }
+
+      // 3. Feast Menu link: https://sweds26.web.app/menu
+      final menuRect = getMenuButtonRect(submission.events);
+      linkOverlays.add(
+        pw.Positioned(
+          left: menuRect.left,
+          top: menuRect.top,
+          child: pw.UrlLink(
+            destination: menuUrl,
+            child: pw.SizedBox(
+              width: menuRect.width,
+              height: menuRect.height,
+            ),
+          ),
+        ),
+      );
+    } else {
+      // Feast Menu link for greeting
+      final menuRect = getMenuButtonRect(submission.events);
+      linkOverlays.add(
+        pw.Positioned(
+          left: menuRect.left,
+          top: menuRect.top,
+          child: pw.UrlLink(
+            destination: menuUrl,
+            child: pw.SizedBox(
+              width: menuRect.width,
+              height: menuRect.height,
+            ),
+          ),
+        ),
+      );
+    }
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: pageFormat,
+        margin: pw.EdgeInsets.zero,
+        build: (pw.Context context) {
+          return pw.Stack(
+            children: [
+              pw.Positioned.fill(
+                child: pw.Image(bgImage, fit: pw.BoxFit.fill),
+              ),
+              ...linkOverlays,
+            ],
+          );
+        },
+      ),
+    );
+
+    return pdf.save();
+  }
+
+  /// Generates the invitation PDF file and triggers the browser download.
+  Future<Uint8List> generateAndDownloadPdf(RsvpSubmission submission) async {
+    final bytes = await generateInvitePdfBytes(submission);
+    final isAccept = submission.attendance == Attendance.accepts;
+    final sanitizedName = submission.name
+        .trim()
+        .replaceAll(RegExp(r'[^\w\s]+'), '')
+        .replaceAll(RegExp(r'\s+'), '_');
+    final fileName = isAccept
+        ? 'Sayantika_Som_Bengali_Wedding_Invite_${sanitizedName.isEmpty ? 'Guest' : sanitizedName}.pdf'
+        : 'Sayantika_Som_Wedding_Greeting_${sanitizedName.isEmpty ? 'Friend' : sanitizedName}.pdf';
+
+    downloadCardPdf(bytes, fileName);
+    return bytes;
+  }
+
   void _drawBengaliOrnateBorders(Canvas canvas) {
     const goldPrimary = Color(0xFFF3D588);
     const goldDeep = Color(0xFFC49A2C);
-    const goldLight = Color(0xFFFFE8A8);
 
-    // Outer primary gold border
-    final outerBorder = Paint()
+    final outerPaint = Paint()
       ..color = goldPrimary
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.5;
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        const Rect.fromLTWH(36, 36, cardWidth - 72, cardHeight - 72),
-        const Radius.circular(22),
-      ),
-      outerBorder,
-    );
 
-    // Intermediate thin decorative accent border
-    final midBorder = Paint()
-      ..color = goldDeep.withValues(alpha: .65)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2;
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        const Rect.fromLTWH(46, 46, cardWidth - 92, cardHeight - 92),
-        const Radius.circular(16),
-      ),
-      midBorder,
-    );
-
-    // Inner beaded border (dotted pearls)
-    final beadPaint = Paint()..color = goldLight.withValues(alpha: .55);
-    const double step = 28.0;
-    // Top & bottom beading
-    for (double x = 70; x < cardWidth - 70; x += step) {
-      canvas.drawCircle(Offset(x, 56), 1.8, beadPaint);
-      canvas.drawCircle(Offset(x, cardHeight - 56), 1.8, beadPaint);
-    }
-    // Left & right beading
-    for (double y = 70; y < cardHeight - 70; y += step) {
-      canvas.drawCircle(Offset(56, y), 1.8, beadPaint);
-      canvas.drawCircle(Offset(cardWidth - 56, y), 1.8, beadPaint);
-    }
-
-    // 4 Traditional Bengali Corner Kalkas (কল্কা / Paisley Motifs)
-    _drawBengaliCornerKalka(canvas, 50, 50, 0, goldLight, goldPrimary, goldDeep);
-    _drawBengaliCornerKalka(canvas, cardWidth - 50, 50, 1, goldLight, goldPrimary, goldDeep);
-    _drawBengaliCornerKalka(canvas, cardWidth - 50, cardHeight - 50, 2, goldLight, goldPrimary, goldDeep);
-    _drawBengaliCornerKalka(canvas, 50, cardHeight - 50, 3, goldLight, goldPrimary, goldDeep);
-  }
-
-  void _drawBengaliCornerKalka(
-    Canvas canvas,
-    double x,
-    double y,
-    int quadrant,
-    Color light,
-    Color mid,
-    Color deep,
-  ) {
-    canvas.save();
-    canvas.translate(x, y);
-    canvas.rotate(quadrant * (math.pi / 2));
-
-    final strokePaint = Paint()
-      ..color = mid
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.2;
-
-    // Traditional Bengali Kalka teardrop body
-    final kalkaPath = Path()
-      ..moveTo(8, 54)
-      ..cubicTo(12, 28, 28, 12, 54, 8)
-      ..cubicTo(40, 24, 34, 42, 16, 52)
-      ..quadraticBezierTo(10, 54, 8, 54)
-      ..close();
-    canvas.drawPath(kalkaPath, strokePaint);
-
-    // Inner spiral flourish
     final innerPaint = Paint()
-      ..color = light
+      ..color = goldDeep.withValues(alpha: .75)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.4;
-    final spiral = Path()
-      ..moveTo(22, 22)
-      ..quadraticBezierTo(34, 20, 36, 30)
-      ..quadraticBezierTo(38, 40, 26, 42);
-    canvas.drawPath(spiral, innerPaint);
 
-    // Decorative stippling pearls
-    final dotPaint = Paint()..color = light;
-    canvas.drawCircle(const Offset(16, 16), 3.5, dotPaint);
-    canvas.drawCircle(const Offset(30, 14), 2.0, dotPaint);
-    canvas.drawCircle(const Offset(14, 30), 2.0, dotPaint);
-    canvas.drawCircle(const Offset(44, 20), 2.0, dotPaint);
+    const outerMargin = 32.0;
+    const innerMargin = 44.0;
 
-    // Radiating corner flourish
-    final fanPaint = Paint()
-      ..color = deep.withValues(alpha: .7)
+    // Outer & Inner Rectangles
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(
+          outerMargin,
+          outerMargin,
+          cardWidth - outerMargin * 2,
+          cardHeight - outerMargin * 2,
+        ),
+        const Radius.circular(22),
+      ),
+      outerPaint,
+    );
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(
+          innerMargin,
+          innerMargin,
+          cardWidth - innerMargin * 2,
+          cardHeight - innerMargin * 2,
+        ),
+        const Radius.circular(16),
+      ),
+      innerPaint,
+    );
+
+    // 4 Corner Traditional Kalkas / Paisley Motifs
+    _drawTraditionalCornerMotif(canvas, innerMargin, innerMargin, 0);
+    _drawTraditionalCornerMotif(canvas, cardWidth - innerMargin, innerMargin, math.pi / 2);
+    _drawTraditionalCornerMotif(canvas, cardWidth - innerMargin, cardHeight - innerMargin, math.pi);
+    _drawTraditionalCornerMotif(canvas, innerMargin, cardHeight - innerMargin, -math.pi / 2);
+  }
+
+  void _drawTraditionalCornerMotif(Canvas canvas, double x, double y, double rotation) {
+    canvas.save();
+    canvas.translate(x, y);
+    canvas.rotate(rotation);
+
+    const gold = Color(0xFFF5DC96);
+    final paint = Paint()
+      ..color = gold
       ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8;
+
+    final kalkaPath = Path()
+      ..moveTo(0, 0)
+      ..lineTo(36, 0)
+      ..cubicTo(48, 8, 48, 28, 28, 38)
+      ..cubicTo(16, 44, 4, 34, 0, 0)
+      ..close();
+    canvas.drawPath(kalkaPath, paint);
+
+    canvas.drawCircle(const Offset(22, 20), 4, Paint()..color = gold);
+
+    final fanPaint = Paint()
+      ..color = gold.withValues(alpha: .8)
       ..strokeWidth = 1.2;
     canvas.drawLine(const Offset(6, 6), const Offset(20, 20), fanPaint);
     canvas.drawLine(const Offset(6, 12), const Offset(14, 20), fanPaint);
@@ -391,7 +522,7 @@ class CardGeneratorService {
       maxWidth: 860,
     );
 
-    y += 26;
+    y += 24;
 
     // 7. Venue Details Filtered by Guest Event Selection
     switch (s.events) {
@@ -399,7 +530,7 @@ class CardGeneratorService {
         _drawSingleVenueBox(
           canvas,
           y: y,
-          boxHeight: 270,
+          boxHeight: 250,
           title: 'WEDDING CEREMONY · SHUBHO BIBAHO',
           subtitle: 'শুভ বিবাহ বাসর · সাতপাকে বাঁধা ও সিঁদুরদান',
           date: WeddingConfig.weddingDateLabel,
@@ -412,7 +543,7 @@ class CardGeneratorService {
         _drawSingleVenueBox(
           canvas,
           y: y,
-          boxHeight: 270,
+          boxHeight: 250,
           title: 'RECEPTION GALA · BOU BHAAT',
           subtitle: 'বৌভাত ও প্রীতিভোজ · শুভ মিলন উৎসব',
           date: WeddingConfig.receptionDateLabel,
@@ -439,7 +570,90 @@ class CardGeneratorService {
         );
     }
 
-    // 8. Footer
+    // 8. Interactive Clickable Action Buttons (Active in the PDF download)
+    if (s.events == AttendingEvents.both) {
+      final weddingRect = getWeddingMapButtonRect(s.events);
+      final receptionRect = getReceptionMapButtonRect(s.events);
+      final menuRect = getMenuButtonRect(s.events);
+
+      _drawLinkButton(
+        canvas,
+        weddingRect,
+        label: '📍 Wedding Map (Midnapore) ↗',
+        borderColor: goldDeep,
+        textColor: goldPrimary,
+        bgColor: const Color(0xFF3B060C).withValues(alpha: .75),
+        fontSize: 16.0,
+      );
+
+      _drawLinkButton(
+        canvas,
+        receptionRect,
+        label: '📍 Reception Map (Haldia) ↗',
+        borderColor: goldDeep,
+        textColor: goldPrimary,
+        bgColor: const Color(0xFF3B060C).withValues(alpha: .75),
+        fontSize: 16.0,
+      );
+
+      _drawLinkButton(
+        canvas,
+        menuRect,
+        label: '🍽️ Royal Feast Menu · https://sweds26.web.app/menu ↗',
+        borderColor: goldPrimary,
+        textColor: ivory,
+        bgColor: const Color(0xFF4A0810).withValues(alpha: .85),
+        fontSize: 18.0,
+      );
+    } else if (s.events == AttendingEvents.weddingOnly) {
+      final weddingRect = getWeddingMapButtonRect(s.events);
+      final menuRect = getMenuButtonRect(s.events);
+
+      _drawLinkButton(
+        canvas,
+        weddingRect,
+        label: '📍 Open Wedding Ceremony in Google Maps ↗',
+        borderColor: goldDeep,
+        textColor: goldPrimary,
+        bgColor: const Color(0xFF3B060C).withValues(alpha: .75),
+        fontSize: 17.5,
+      );
+
+      _drawLinkButton(
+        canvas,
+        menuRect,
+        label: '🍽️ Royal Feast Menu · https://sweds26.web.app/menu ↗',
+        borderColor: goldPrimary,
+        textColor: ivory,
+        bgColor: const Color(0xFF4A0810).withValues(alpha: .85),
+        fontSize: 18.0,
+      );
+    } else {
+      final receptionRect = getReceptionMapButtonRect(s.events);
+      final menuRect = getMenuButtonRect(s.events);
+
+      _drawLinkButton(
+        canvas,
+        receptionRect,
+        label: '📍 Open Reception Gala in Google Maps ↗',
+        borderColor: goldDeep,
+        textColor: goldPrimary,
+        bgColor: const Color(0xFF3B060C).withValues(alpha: .75),
+        fontSize: 17.5,
+      );
+
+      _drawLinkButton(
+        canvas,
+        menuRect,
+        label: '🍽️ Royal Feast Menu · https://sweds26.web.app/menu ↗',
+        borderColor: goldPrimary,
+        textColor: ivory,
+        bgColor: const Color(0xFF4A0810).withValues(alpha: .85),
+        fontSize: 18.0,
+      );
+    }
+
+    // 9. Footer
     _drawFooter(canvas, '#SomKiSayantika · Aapnar Upasthiti Kamona Kori');
   }
 
@@ -481,19 +695,19 @@ class CardGeneratorService {
 
     y = _drawCenteredText(
       canvas,
-      'আন্তরিক শুভেচ্ছা ও ভালোবাসা',
+      'SHUBHO BIBAHO · শুভ বিবাহ',
       y: y,
-      fontSize: 28,
+      fontSize: 29,
       fontWeight: FontWeight.w700,
-      letterSpacing: 3.5,
+      letterSpacing: 4.5,
       color: const Color(0xFFFFE6A0),
     );
 
     y += 20;
     _drawOrnamentalDivider(canvas, y);
-    y += 32;
+    y += 30;
 
-    // 3. Couple Names
+    // 3. Bride & Groom Calligraphy
     y = _drawCenteredText(
       canvas,
       'Sayantika & Som',
@@ -504,50 +718,38 @@ class CardGeneratorService {
       fontFamily: 'Cinzel Decorative',
     );
 
-    y += 18;
+    y += 24;
     _drawOrnamentalDivider(canvas, y);
-    y += 42;
+    y += 36;
 
-    // 4. Personalized greeting
+    // 4. Personalized Dear Guest
     y = _drawCenteredText(
       canvas,
-      'Dear ${s.name.trim()},',
+      'Dearest ${s.name.trim()},',
       y: y,
       fontSize: 38,
       fontWeight: FontWeight.w700,
       color: const Color(0xFFFFE599),
     );
 
-    y += 32;
+    y += 24;
 
-    // 5. Heartfelt Message (strictly no venues)
+    // 5. Gracious Blessing & Memory Message
     y = _drawParagraph(
       canvas,
-      'Though we will dearly miss having you beside us in person on our wedding day, '
-      'your warm wishes, prayers, and heartfelt blessings will accompany us as we step '
-      'into this beautiful new chapter together.',
-      y: y,
-      fontSize: 25,
-      height: 1.6,
-      color: softCream,
-      maxWidth: 840,
-    );
-
-    y += 34;
-
-    y = _drawParagraph(
-      canvas,
-      'We hold your blessings close to our hearts with boundless gratitude. '
-      'Wishing you and your family lasting peace, good health, and joyful moments always.',
+      'Though we will dearly miss your smiling face at our wedding mandap and celebrations, '
+      'your heartfelt wishes, warm prayers, and blessings are forever treasured in our hearts.\n\n'
+      'We embark upon this sacred journey of marriage surrounded by the love of cherished friends and family like you.',
       y: y,
       fontSize: 24,
-      height: 1.6,
-      color: softCream.withValues(alpha: .9),
-      maxWidth: 840,
+      height: 1.55,
+      color: softCream,
+      maxWidth: 860,
     );
 
-    y += 56;
+    y += 44;
 
+    // 6. Signoff
     y = _drawCenteredText(
       canvas,
       'With heartfelt love & gratitude,',
@@ -568,8 +770,65 @@ class CardGeneratorService {
       color: ivory,
     );
 
+    // Menu link button
+    final menuRect = getMenuButtonRect(s.events);
+    _drawLinkButton(
+      canvas,
+      menuRect,
+      label: '🍽️ Royal Feast Menu · https://sweds26.web.app/menu ↗',
+      borderColor: goldPrimary,
+      textColor: ivory,
+      bgColor: const Color(0xFF4A0810).withValues(alpha: .85),
+      fontSize: 18.0,
+    );
+
     // Footer
     _drawFooter(canvas, '#SomKiSayantika · Thank You For Your Warm Blessings');
+  }
+
+  void _drawLinkButton(
+    Canvas canvas,
+    Rect rect, {
+    required String label,
+    required Color borderColor,
+    required Color textColor,
+    required Color bgColor,
+    double fontSize = 17.0,
+  }) {
+    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(16));
+    final bgPaint = Paint()
+      ..color = bgColor
+      ..style = PaintingStyle.fill;
+    final borderPaint = Paint()
+      ..color = borderColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.6;
+
+    canvas.drawRRect(rrect, bgPaint);
+    canvas.drawRRect(rrect, borderPaint);
+
+    final tp = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: textColor,
+          fontSize: fontSize,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.1,
+          fontFamilyFallback: const ['Cormorant Garamond', 'Georgia', 'serif'],
+        ),
+      ),
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: rect.width - 24);
+
+    tp.paint(
+      canvas,
+      Offset(
+        rect.left + (rect.width - tp.width) / 2,
+        rect.top + (rect.height - tp.height) / 2,
+      ),
+    );
   }
 
   void _drawDualVenueBox(
@@ -716,7 +975,7 @@ class CardGeneratorService {
 
     final boxRect = Rect.fromLTWH(90, y, cardWidth - 180, boxHeight);
     final bgPaint = Paint()
-      ..color = const Color(0xFF33050A).withValues(alpha: .78)
+      ..color = const Color(0xFF33050A).withValues(alpha: .80)
       ..style = PaintingStyle.fill;
     final borderPaint = Paint()
       ..color = const Color(0xFFE8D08D).withValues(alpha: .8)
@@ -756,7 +1015,7 @@ class CardGeneratorService {
       y: cy,
       fontSize: 22,
       fontWeight: FontWeight.w700,
-      color: const Color(0xFFFFEAA7),
+      color: goldDeep,
     );
 
     cy += 6;
@@ -764,7 +1023,7 @@ class CardGeneratorService {
       canvas,
       venue,
       y: cy,
-      fontSize: 26,
+      fontSize: 25,
       fontWeight: FontWeight.w700,
       color: ivory,
     );
@@ -774,11 +1033,11 @@ class CardGeneratorService {
       canvas,
       address,
       y: cy,
-      fontSize: 17.5,
+      fontSize: 17,
       color: softCream,
     );
 
-    cy += 14;
+    cy += 10;
     _drawCenteredText(
       canvas,
       note,
@@ -824,35 +1083,32 @@ class CardGeneratorService {
         style: TextStyle(
           color: color,
           fontSize: 17,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.2,
-          fontFamilyFallback: const ['Cinzel', 'Georgia', 'serif'],
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.5,
+          fontFamilyFallback: const ['Cormorant Garamond', 'Georgia', 'serif'],
         ),
       ),
+      textAlign: TextAlign.center,
       textDirection: TextDirection.ltr,
     )..layout();
 
-    final pillW = tp.width + 40;
-    final pillH = tp.height + 14;
-    final pillRect = Rect.fromCenter(
-      center: Offset(cardWidth / 2, y + pillH / 2),
-      width: pillW,
-      height: pillH,
-    );
+    final badgeW = tp.width + 48;
+    const badgeH = 40.0;
+    final badgeRect = Rect.fromLTWH((cardWidth - badgeW) / 2, y, badgeW, badgeH);
 
-    final bg = Paint()
-      ..color = color.withValues(alpha: .16)
+    final bgPaint = Paint()
+      ..color = const Color(0xFFE2B857).withValues(alpha: .18)
       ..style = PaintingStyle.fill;
-    final border = Paint()
-      ..color = color.withValues(alpha: .75)
+    final borderPaint = Paint()
+      ..color = color.withValues(alpha: .65)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.4;
+      ..strokeWidth = 1.2;
 
-    canvas.drawRRect(RRect.fromRectAndRadius(pillRect, const Radius.circular(20)), bg);
-    canvas.drawRRect(RRect.fromRectAndRadius(pillRect, const Radius.circular(20)), border);
+    canvas.drawRRect(RRect.fromRectAndRadius(badgeRect, const Radius.circular(20)), bgPaint);
+    canvas.drawRRect(RRect.fromRectAndRadius(badgeRect, const Radius.circular(20)), borderPaint);
 
-    tp.paint(canvas, Offset((cardWidth - tp.width) / 2, y + 7));
-    return y + pillH;
+    tp.paint(canvas, Offset((cardWidth - tp.width) / 2, y + (badgeH - tp.height) / 2));
+    return y + badgeH;
   }
 
   double _drawCenteredText(
@@ -860,8 +1116,8 @@ class CardGeneratorService {
     String text, {
     required double y,
     required double fontSize,
-    Color color = const Color(0xFFFFF9ED),
-    FontWeight fontWeight = FontWeight.normal,
+    Color color = Colors.white,
+    FontWeight fontWeight = FontWeight.w400,
     FontStyle fontStyle = FontStyle.normal,
     double letterSpacing = 0,
     String? fontFamily,
@@ -876,7 +1132,13 @@ class CardGeneratorService {
           fontStyle: fontStyle,
           letterSpacing: letterSpacing,
           fontFamily: fontFamily,
-          fontFamilyFallback: const ['Cinzel', 'Playfair Display', 'Georgia', 'serif'],
+          fontFamilyFallback: const [
+            'Cinzel Decorative',
+            'Playfair Display',
+            'Cormorant Garamond',
+            'Georgia',
+            'serif',
+          ],
         ),
       ),
       textAlign: TextAlign.center,

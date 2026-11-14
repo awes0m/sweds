@@ -30,6 +30,7 @@ class _CardPreviewDialogState extends State<CardPreviewDialog> {
   Uint8List? _cardBytes;
   bool _generating = true;
   bool _downloading = false;
+  bool _downloadingPdf = false;
   String? _error;
 
   @override
@@ -98,6 +99,35 @@ class _CardPreviewDialogState extends State<CardPreviewDialog> {
       }
     } finally {
       if (mounted) setState(() => _downloading = false);
+    }
+  }
+
+  Future<void> _downloadPdf() async {
+    if (_downloadingPdf) return;
+    setState(() => _downloadingPdf = true);
+    try {
+      const generator = CardGeneratorService();
+      await generator.generateAndDownloadPdf(widget.submission);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Interactive PDF downloaded with Google Maps & Menu links! 📄'),
+            backgroundColor: Lux.crimson,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('PDF download failed: $e'),
+            backgroundColor: const Color(0xFFB3463B),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _downloadingPdf = false);
     }
   }
 
@@ -206,8 +236,14 @@ class _CardPreviewDialogState extends State<CardPreviewDialog> {
                 runSpacing: 8,
                 children: [
                   LuxuryButton(
+                    label: _downloadingPdf ? 'Downloading PDF...' : 'Download PDF (Interactive) 📄',
+                    loading: _downloadingPdf,
+                    onPressed: _cardBytes != null ? _downloadPdf : null,
+                  ),
+                  LuxuryButton(
                     label: _downloading ? 'Downloading...' : 'Download PNG 📥',
                     loading: _downloading,
+                    filled: false,
                     onPressed: _cardBytes != null ? _download : null,
                   ),
                   LuxuryButton(

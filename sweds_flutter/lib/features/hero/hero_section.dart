@@ -30,7 +30,8 @@ class _HeroStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final nameSize = context.fluid(58, 150);
+    final wide = size.width >= 900;
+    final nameSize = context.fluid(wide ? 52 : 36, 140);
     final fade = 1 - Motion.window(p, 0.30, 0.85);
     final blur = Motion.window(p, 0.2, 0.9) * 14;
 
@@ -50,18 +51,18 @@ class _HeroStage extends StatelessWidget {
               duration: 1200.ms,
               curve: Motion.cinematic,
             ),
-        const SizedBox(height: 18),
+        SizedBox(height: wide ? 18 : 10),
         Text(
           'SHUBHO BIBAHO · শুভ বিবাহ',
           style: LuxText.serif(
-            context.fluid(14, 18),
+            context.fluid(13, 18),
             style: FontStyle.normal,
-            spacing: 5,
+            spacing: wide ? 5 : 3,
             weight: FontWeight.w600,
             color: Lux.goldDeep,
           ),
         ).animate().fadeIn(delay: 500.ms, duration: 1200.ms),
-        const SizedBox(height: 14),
+        SizedBox(height: wide ? 14 : 8),
         LetterReveal(
           text: WeddingConfig.groom,
           style: LuxText.display(nameSize),
@@ -89,11 +90,17 @@ class _HeroStage extends StatelessWidget {
           style: LuxText.display(nameSize),
           delay: 1900.ms,
         ),
-        const SizedBox(height: 26),
+        SizedBox(height: wide ? 24 : 14),
         Container(
-          width: 1,
-          height: 60,
-          color: Lux.crimson.withValues(alpha: 0.6),
+          width: 1.2,
+          height: wide ? 60 : 30,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Lux.crimson, Lux.gold],
+            ),
+          ),
         ).animate().scale(
           begin: const Offset(1, 0),
           end: const Offset(1, 1),
@@ -102,13 +109,13 @@ class _HeroStage extends StatelessWidget {
           duration: 900.ms,
           curve: Motion.cinematic,
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: wide ? 16 : 10),
         Text(
               WeddingConfig.dateLabel,
               style: LuxText.serif(
-                context.fluid(22, 34),
+                context.fluid(18, 34),
                 style: FontStyle.normal,
-                spacing: 8,
+                spacing: wide ? 8 : 4,
                 weight: FontWeight.w600,
                 color: Lux.crimson,
               ),
@@ -122,11 +129,11 @@ class _HeroStage extends StatelessWidget {
               duration: 1200.ms,
               curve: Motion.cinematic,
             ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text(
           WeddingConfig.venueCity,
           style: LuxText.serif(
-            context.fluid(17, 22),
+            context.fluid(15, 22),
             color: Lux.dark.withValues(alpha: 0.85),
           ),
         ).animate().fadeIn(delay: 3400.ms, duration: 1200.ms),

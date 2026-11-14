@@ -192,6 +192,7 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage>
                     ),
                   ),
                   const TopBar(),
+                  const MobileSidebarDrawer(),
                   const SideDots(),
                   const ScrollProgressLine(),
                   const FloatingCta(),

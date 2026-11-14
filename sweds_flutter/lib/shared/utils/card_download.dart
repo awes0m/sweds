@@ -7,6 +7,14 @@ void downloadCardImage(Uint8List bytes, String fileName) {
   triggerFileDownload(bytes, fileName);
 }
 
+void downloadCardPdf(Uint8List bytes, String fileName) {
+  triggerFileDownload(bytes, fileName);
+}
+
 void openCardImage(Uint8List bytes) {
   triggerOpenInNewTab(bytes);
+}
+
+void openCardPdf(Uint8List bytes, [String fileName = 'card.pdf']) {
+  triggerOpenInNewTab(bytes, fileName);
 }

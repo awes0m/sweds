@@ -32,7 +32,7 @@ class _CountdownStage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final rem = ref.watch(countdownProvider).value ?? WeddingConfig.remaining();
     final wide = size.width >= 900;
-    final dial = wide ? 230.0 : ((size.width - 70) / 2).clamp(130.0, 200.0);
+    final dial = wide ? 230.0 : ((size.width - 56) / 2).clamp(115.0, 160.0);
     final items = <(String, int, double)>[
       ('DAYS', rem.inDays, (rem.inDays / 365).clamp(0.0, 1.0)),
       ('HOURS', rem.inHours % 24, (rem.inHours % 24) / 24),
@@ -53,11 +53,11 @@ class _CountdownStage extends ConsumerWidget {
               title: 'Until forever begins',
             ),
           ),
-          const SizedBox(height: 44),
+          SizedBox(height: wide ? 44 : 20),
           Wrap(
             alignment: WrapAlignment.center,
-            spacing: wide ? 36 : 18,
-            runSpacing: wide ? 36 : 22,
+            spacing: wide ? 36 : 14,
+            runSpacing: wide ? 36 : 16,
             children: [
               for (var i = 0; i < items.length; i++)
                 ProgressReveal(
@@ -76,17 +76,17 @@ class _CountdownStage extends ConsumerWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 40),
+          SizedBox(height: wide ? 40 : 20),
           ProgressReveal(
             progress: p,
             start: 0.4,
             end: 0.6,
             child: Text(
-              '${WeddingConfig.dateLabel}  ·  ${WeddingConfig.venueName}',
+              '${WeddingConfig.dateLabel}  ·  ${WeddingConfig.venueCityShort}',
               style: LuxText.serif(
-                context.fluid(18, 24),
+                context.fluid(15, 24),
                 style: FontStyle.normal,
-                spacing: 4,
+                spacing: 3,
                 color: Lux.crimson,
                 weight: FontWeight.w600,
               ),

@@ -35,15 +35,15 @@ class _VenueStage extends StatelessWidget {
     final wide = w >= 900;
     final reveal = Motion.cinematic.transform(Motion.window(p, 0, 0.5));
     final settle = Motion.window(p, 0.3, 0.9);
-    final imgW = wide ? w * 0.38 : math.min(w * 0.65, 230.0);
-    final imgH = wide ? h * 0.76 : math.min(h * 0.16, 115.0);
-    final imgLeft = wide ? w * 0.08 : (w - imgW) / 2;
-    final imgTop = wide ? (h - imgH) / 2 : 12.0;
-    final panelW = wide ? w * 0.38 : math.min(w * 0.92, 440.0);
-    final cardTop = wide ? h * 0.14 : (imgTop + imgH + 10.0);
+    final imgW = wide ? w * 0.44 : math.min(w * 0.90, 380.0);
+    final imgH = wide ? math.min(h * 0.62, imgW * 0.70) : (imgW * 0.54).clamp(140.0, 190.0);
+    final imgLeft = wide ? w * 0.06 : (w - imgW) / 2;
+    final imgTop = wide ? (h - imgH) / 2 : (h * 0.08).clamp(8.0, 36.0);
+    final panelW = wide ? w * 0.42 : math.min(w * 0.92, 440.0);
+    final cardTop = wide ? (h - (h * 0.68).clamp(380.0, 560.0)) / 2 : (imgTop + imgH + 12.0);
 
     return Stack(children: [
-      // --- Layered arch: frame / photo / floating accents -------------------
+      // --- Layered frame: photo / floating accents -------------------
       Positioned(
         left: imgLeft,
         top: imgTop,
@@ -58,50 +58,66 @@ class _VenueStage extends StatelessWidget {
               dz: -(1 - reveal) * 240,
             ),
             child: Stack(clipBehavior: Clip.none, children: [
-              // back layer: gold outline arch, separates as you scroll
+              // back layer: gold outline frame, separates as you scroll
               Transform.translate(
-                offset: Offset(-26 * settle - o.dx * 18, -26 * settle - o.dy * 18),
+                offset: Offset(-20 * settle - o.dx * 14, -20 * settle - o.dy * 14),
                 child: Opacity(
                   opacity: settle,
                   child: DecoratedBox(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(imgW / 2)),
+                      borderRadius: BorderRadius.circular(26),
                       border: Border.all(color: Lux.gold.withValues(alpha: .7), width: 1.2),
                     ),
                     child: const SizedBox.expand(),
                   ),
                 ),
               ),
-              // main photo with clip-reveal + zoom
+              // main photo with graceful fit (no chopping!)
               Positioned.fill(
-                child: ClipPath(
-                  clipper: _ArchReveal(reveal),
-                  child: Transform.scale(
-                    scale: 1.35 - 0.35 * reveal,
-                    child: Transform.translate(
-                      offset: Offset(o.dx * -14, o.dy * -14),
-                      child: const ArtImage(name: 'venue', seed: 3, cacheWidth: 1600),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(26),
+                    border: Border.all(color: Lux.gold.withValues(alpha: .8), width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Lux.dark.withValues(alpha: 0.16),
+                        blurRadius: 36,
+                        offset: const Offset(0, 16),
+                      ),
+                      BoxShadow(
+                        color: Lux.gold.withValues(alpha: 0.14),
+                        blurRadius: 50,
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: const ArtImage(
+                      name: 'venue',
+                      seed: 3,
+                      cacheWidth: 1600,
+                      gracefulFit: true,
                     ),
                   ),
                 ),
               ),
               // front layer: floating glass seal
               Positioned(
-                right: wide ? (-18 + o.dx * 16) : (-8 + o.dx * 8),
-                bottom: wide ? (imgH * 0.12 + o.dy * 10) : (4 + o.dy * 4),
+                right: wide ? (-16 + o.dx * 14) : (8 + o.dx * 6),
+                bottom: wide ? (imgH * 0.08 + o.dy * 8) : (8 + o.dy * 4),
                 child: Opacity(
                   opacity: settle,
                   child: GlassPanel(
                     radius: 60,
                     blur: 14,
                     padding: EdgeInsets.symmetric(
-                      horizontal: wide ? 22 : 14,
-                      vertical: wide ? 14 : 6,
+                      horizontal: wide ? 20 : 12,
+                      vertical: wide ? 12 : 5,
                     ),
                     child: Text(
                       WeddingConfig.venueCityShort,
                       style: LuxText.serif(
-                        wide ? 22 : 14,
+                        wide ? 20 : 13,
                         color: Lux.crimson,
                         weight: FontWeight.w600,
                       ),
@@ -468,7 +484,10 @@ class _VenueTab extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: active ? Lux.gold : Colors.transparent,
+            color: active ? Lux.crimson : Colors.transparent,
+            border: Border.all(
+              color: active ? Lux.gold.withValues(alpha: 0.8) : Colors.transparent,
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -476,7 +495,7 @@ class _VenueTab extends StatelessWidget {
               Icon(
                 icon,
                 size: compact ? 12 : 14,
-                color: active ? Lux.dark : Lux.dark.withValues(alpha: .6),
+                color: active ? Lux.ivory : Lux.dark.withValues(alpha: .6),
               ),
               SizedBox(width: compact ? 4 : 5),
               Text(
@@ -484,7 +503,7 @@ class _VenueTab extends StatelessWidget {
                 style: LuxText.serif(
                   compact ? 11.5 : 13,
                   weight: active ? FontWeight.w700 : FontWeight.w500,
-                  color: active ? Lux.dark : Lux.dark.withValues(alpha: .7),
+                  color: active ? Lux.ivory : Lux.dark.withValues(alpha: .7),
                 ),
               ),
             ],
@@ -493,25 +512,4 @@ class _VenueTab extends StatelessWidget {
       ),
     );
   }
-}
-
-class _ArchReveal extends CustomClipper<Path> {
-  _ArchReveal(this.t);
-  final double t;
-
-  @override
-  Path getClip(Size s) {
-    final inset = 1 - t;
-    final r = Rect.fromLTRB(
-      s.width * 0.3 * inset,
-      s.height * 0.22 * inset,
-      s.width * (1 - 0.3 * inset),
-      s.height,
-    );
-    final rad = Radius.circular(r.width / 2);
-    return Path()..addRRect(RRect.fromRectAndCorners(r, topLeft: rad, topRight: rad));
-  }
-
-  @override
-  bool shouldReclip(_ArchReveal old) => old.t != t;
 }

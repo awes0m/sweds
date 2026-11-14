@@ -60,6 +60,25 @@ void main() {
       expect(bytes[2], 0x4E);
       expect(bytes[3], 0x47);
     });
+    test('generates valid PDF bytes with interactive links for accepted RSVP invite', () async {
+      const submission = RsvpSubmission(
+        name: 'Rahul Sharma',
+        email: 'rahul@example.com',
+        phone: '+919876543210',
+        attendance: Attendance.accepts,
+        events: AttendingEvents.both,
+        guests: 2,
+        message: 'Congratulations Som & Sayantika!',
+      );
+
+      final bytes = await generator.generateInvitePdfBytes(submission);
+      expect(bytes.isNotEmpty, isTrue);
+      // PDF magic header check: %PDF (0x25, 0x50, 0x44, 0x46)
+      expect(bytes[0], 0x25); // '%'
+      expect(bytes[1], 0x50); // 'P'
+      expect(bytes[2], 0x44); // 'D'
+      expect(bytes[3], 0x46); // 'F'
+    });
   });
 }
 

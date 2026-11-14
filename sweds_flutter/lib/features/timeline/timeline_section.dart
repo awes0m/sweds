@@ -30,21 +30,22 @@ class _TimelineStage extends StatelessWidget {
   Widget build(BuildContext context) {
     final n = kEvents.length;
     final w = size.width, h = size.height;
-    final cw = (w * 0.78).clamp(280.0, 400.0);
-    const gap = 36.0;
+    final wide = w >= 900;
+    final cw = wide ? (w * 0.78).clamp(320.0, 420.0) : (w * 0.88).clamp(270.0, 360.0);
+    final gap = wide ? 36.0 : 20.0;
     final step = cw + gap;
     final pad = (w - cw) / 2;
     final rowW = pad * 2 + n * cw + (n - 1) * gap;
     final f = p * (n - 1);
-    final cardH = (h * 0.44).clamp(300.0, 400.0);
+    final cardH = (h * (wide ? 0.44 : 0.50)).clamp(wide ? 300.0 : 320.0, 420.0);
     final active = f.round().clamp(0, n - 1);
 
     return Stack(
       children: [
         Positioned(
-          left: w >= 900 ? 64 : 22,
-          top: h * (w >= 900 ? .10 : .09),
-          right: 22,
+          left: wide ? 64 : 18,
+          top: h * (wide ? .10 : .065),
+          right: 18,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -52,10 +53,10 @@ class _TimelineStage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('THE CELEBRATIONS', style: LuxText.eyebrow(Lux.crimson)),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
                   Text(
                     '4 Days ৫ Traditions',
-                    style: LuxText.display(context.fluid(30, 60)),
+                    style: LuxText.display(context.fluid(26, 60)),
                   ),
                 ],
               ),
@@ -63,10 +64,11 @@ class _TimelineStage extends StatelessWidget {
               Text(
                 '0${active + 1} / 0$n',
                 style: LuxText.serif(
-                  context.fluid(22, 34),
+                  context.fluid(18, 34),
                   style: FontStyle.normal,
-                  color: Lux.goldDeep,
+                  color: Lux.crimson,
                   spacing: 3,
+                  weight: FontWeight.w700,
                 ),
               ),
             ],
@@ -153,8 +155,8 @@ class _EventCard extends StatelessWidget {
           width: width,
           height: height,
           child: GlassPanel(
-            radius: 30,
-            padding: const EdgeInsets.all(26),
+            radius: 28,
+            padding: EdgeInsets.all(width < 340 ? 16 : 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -163,7 +165,7 @@ class _EventCard extends StatelessWidget {
                     Text(
                       '0${index + 1}',
                       style: LuxText.display(
-                        34,
+                        width < 340 ? 26 : 34,
                         color: Lux.crimson,
                         style: FontStyle.italic,
                       ),
@@ -173,25 +175,37 @@ class _EventCard extends StatelessWidget {
                       event.date.toUpperCase(),
                       style: LuxText.eyebrow(
                         Lux.crimson,
-                      ).copyWith(fontSize: 13, letterSpacing: 3),
+                      ).copyWith(fontSize: width < 340 ? 11 : 13, letterSpacing: 2),
                     ),
                   ],
                 ),
                 const Spacer(),
-                Text(event.name, style: LuxText.display(context.fluid(30, 42))),
-                const SizedBox(height: 8),
+                Text(
+                  event.name,
+                  style: LuxText.display(context.fluid(22, 42), weight: FontWeight.w600),
+                ),
+                const SizedBox(height: 6),
                 Text(
                   '${event.time}  ·  ${event.place}',
                   style: LuxText.serif(
-                    18,
+                    context.fluid(14, 18),
                     color: Lux.crimson,
                     weight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 14),
-                Container(width: 40, height: 1.5, color: Lux.gold),
-                const SizedBox(height: 14),
-                Text(event.blurb, style: LuxText.body(14.5, height: 1.65)),
+                const SizedBox(height: 10),
+                Container(
+                  width: 40,
+                  height: 1.5,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(colors: [Lux.crimson, Lux.gold]),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  event.blurb,
+                  style: LuxText.body(context.fluid(12.5, 14.5), height: 1.55),
+                ),
               ],
             ),
           ),

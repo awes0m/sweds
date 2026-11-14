@@ -44,11 +44,11 @@ class GlassPanel extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Lux.ivory.withValues(alpha: (opacity + 0.18).clamp(0.0, 1.0)),
+                  Color.lerp(Lux.ivory, Lux.rose, 0.08)!.withValues(alpha: (opacity + 0.18).clamp(0.0, 1.0)),
                   Lux.ivory.withValues(alpha: (opacity - 0.12).clamp(0.0, 1.0)),
                 ],
               ),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.75)),
+              border: Border.all(color: Color.lerp(Colors.white, Lux.gold, 0.2)!.withValues(alpha: 0.75)),
             ),
             child: child,
           ),

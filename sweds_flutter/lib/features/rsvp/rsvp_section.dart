@@ -375,12 +375,12 @@ class _RsvpStageState extends ConsumerState<_RsvpStage> {
                     children: [
                       LuxuryButton(
                         label: s.attendance == Attendance.accepts
-                            ? (wide ? 'Download Invite Card 📥' : 'Download Invite 📥')
-                            : (wide ? 'Download Greeting Card 📥' : 'Download Card 📥'),
+                            ? (wide ? 'Download Invite (PDF) 📥' : 'Download PDF 📥')
+                            : (wide ? 'Download Greeting (PDF) 📥' : 'Download PDF 📥'),
                         compact: !wide,
                         onPressed: () async {
                           const generator = CardGeneratorService();
-                          await generator.generateAndDownload(s.toSubmission());
+                          await generator.generateAndDownloadPdf(s.toSubmission());
                         },
                       ),
                       LuxuryButton(
